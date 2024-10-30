@@ -1,12 +1,11 @@
-// components/AddUserForm.js
-
 import { useState } from 'react';
 
 const AddUserForm = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
-    const [roles, setRoles] = useState('ADMINISTRATOR'); 
+    const [password, setPassword] = useState(''); 
+    const [roles, setRoles] = useState('CLIENT'); 
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
@@ -19,6 +18,7 @@ const AddUserForm = () => {
             firstName,
             lastName,
             email,
+            password, // Include the password
             roles: [roles], // Change to array with selected role
         };
 
@@ -41,7 +41,8 @@ const AddUserForm = () => {
             setFirstName('');
             setLastName('');
             setEmail('');
-            setRoles('ADMINISTRATOR'); 
+            setPassword(''); // Reset password field
+            setRoles('CLIENT'); // Reset to default value
         } catch (error) {
             setError(error.message);
         }
@@ -77,9 +78,17 @@ const AddUserForm = () => {
                 />
             </div>
             <div>
+                <label>Password:</label>
+                <input
+                    type="password" // Use password type for security
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+            </div>
+            <div>
                 <label>Roles:</label>
                 <select value={roles} onChange={(e) => setRoles(e.target.value)} required>
-                    <option value="ADMINISTRATOR">ADMINISTRATOR</option>
                     <option value="CLIENT">CLIENT</option>
                     <option value="INSTRUCTOR">INSTRUCTOR</option>
                 </select>
