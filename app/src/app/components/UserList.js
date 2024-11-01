@@ -1,5 +1,3 @@
-// UsersList.js
-
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import DeleteUser from './DeleteUser';
@@ -40,8 +38,9 @@ const UsersList = () => {
         loadUsers(); 
     }, []);
 
-    const handleUserDeleted = (userId) => {
-        setUsers((prevUsers) => prevUsers.filter(user => user.id !== userId));
+    const handleUserDeleted = (email) => {
+        // Filter the deleted user based on email instead of id
+        setUsers((prevUsers) => prevUsers.filter(user => user.email !== email));
     };
 
     if (error) {
@@ -61,7 +60,7 @@ const UsersList = () => {
                             <h3 className="user-name">{user.firstName} {user.lastName}</h3>
                             <p className="user-email">{user.email}</p>
                         </div>
-                        <DeleteUser userId={user.id} onUserDeleted={handleUserDeleted} /> 
+                        <DeleteUser userEmail={user.email} onUserDeleted={handleUserDeleted} /> 
                     </li>
                 ))}
             </ul>

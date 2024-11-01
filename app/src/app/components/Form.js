@@ -4,8 +4,9 @@ const AddUserForm = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState(''); 
-    const [roles, setRoles] = useState('CLIENT'); 
+    const [password, setPassword] = useState('');
+    const [phone, setPhone] = useState(''); // Added phone field
+    const [age, setAge] = useState(''); // Added age field
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
@@ -14,16 +15,18 @@ const AddUserForm = () => {
         setError('');
         setSuccessMessage('');
 
+        // Create the user object specifically for clients
         const user = {
             firstName,
             lastName,
             email,
             password, // Include the password
-            roles: [roles], // Change to array with selected role
+            phone, // Include the phone number
+            age: Number(age), // Convert age to number
         };
 
         try {
-            const response = await fetch('http://localhost:2210/users/add', {
+            const response = await fetch('http://localhost:2210/clients/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -33,16 +36,18 @@ const AddUserForm = () => {
 
             if (!response.ok) {
                 const data = await response.json();
-                throw new Error(data.message || 'Failed to add user');
+                throw new Error(data.message || 'Failed to add client');
             }
 
             const newUser = await response.json();
-            setSuccessMessage(`User ${newUser.firstName} added successfully!`);
+            setSuccessMessage(`Client ${newUser.firstName} added successfully!`);
+            // Reset form fields after successful submission
             setFirstName('');
             setLastName('');
             setEmail('');
-            setPassword(''); // Reset password field
-            setRoles('CLIENT'); // Reset to default value
+            setPassword(''); 
+            setPhone('');
+            setAge('');
         } catch (error) {
             setError(error.message);
         }
@@ -50,6 +55,7 @@ const AddUserForm = () => {
 
     return (
         <form onSubmit={handleSubmit}>
+            <h2>Add Client</h2>
             <div>
                 <label>First Name:</label>
                 <input
@@ -87,15 +93,26 @@ const AddUserForm = () => {
                 />
             </div>
             <div>
-                <label>Roles:</label>
-                <select value={roles} onChange={(e) => setRoles(e.target.value)} required>
-                    <option value="CLIENT">CLIENT</option>
-                    <option value="INSTRUCTOR">INSTRUCTOR</option>
-                </select>
+                <label>Phone:</label>
+                <input
+                    type="text"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                />
+            </div>
+            <div>
+                <label>Age:</label>
+                <input
+                    type="number"
+                    value={age}
+                    onChange={(e) => setAge(e.target.value)}
+                    required
+                />
             </div>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-            <button type="submit">Add User</button>
+            <button type="submit">Add Client</button>
         </form>
     );
 };
