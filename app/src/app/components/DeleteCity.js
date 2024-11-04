@@ -1,35 +1,34 @@
+// src/app/components/DeleteCity.js
+
 import axios from 'axios';
 import React from 'react';
 
-const API_URL = 'http://localhost:2210/users/delete';
-const username = 'admin@test.com'; 
-const password = 'admin123'; 
+const API_URL = 'http://localhost:2210/cities/delete';
+const username = 'admin@test.com';
+const password = 'admin123';
 
-const DeleteUser = ({ userEmail, onUserDeleted }) => {
-    // Log the userEmail to see its value
-    console.log('User email to delete:', userEmail);
-
+const DeleteCity = ({ cityName, onCityDeleted }) => {
     const handleDelete = async () => {
         try {
             const response = await axios.delete(API_URL, {
-                params: { email: userEmail },
+                params: { name: cityName },
                 auth: {
                     username: username,
                     password: password,
                 },
             });
-            console.log('User deleted:', response.data);
-            onUserDeleted(userEmail); 
+            console.log('City deleted:', response.data);
+            onCityDeleted(cityName);
         } catch (error) {
-            console.error("Error deleting user:", error);
-            alert(`Error deleting user: ${error.response ? error.response.data : error.message}`);
+            console.error("Error deleting city:", error);
+            alert(`Error deleting city: ${error.response ? error.response.data.message : error.message}`);
         }
     };
 
     return (
         <div className="delete-button-container">
             <button className="delete-button" onClick={handleDelete}>
-                Delete Users
+                Delete City
             </button>
 
             <style jsx>{`
@@ -62,4 +61,4 @@ const DeleteUser = ({ userEmail, onUserDeleted }) => {
     );
 };
 
-export default DeleteUser;
+export default DeleteCity;

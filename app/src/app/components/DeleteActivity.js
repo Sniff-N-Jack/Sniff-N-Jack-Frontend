@@ -1,35 +1,37 @@
+// src/app/components/DeleteActivity.js
+
 import axios from 'axios';
 import React from 'react';
 
-const API_URL = 'http://localhost:2210/users/delete';
-const username = 'admin@test.com'; 
-const password = 'admin123'; 
+const API_URL = 'http://localhost:2210/activities/delete'; 
+const username = 'admin@test.com';
+const password = 'admin123';
 
-const DeleteUser = ({ userEmail, onUserDeleted }) => {
-    // Log the userEmail to see its value
-    console.log('User email to delete:', userEmail);
+const DeleteActivity = ({ activityId, onActivityDeleted }) => {
+    // Log the activityId to see its value
+    console.log('Activity ID to delete:', activityId);
 
     const handleDelete = async () => {
         try {
             const response = await axios.delete(API_URL, {
-                params: { email: userEmail },
+                params: { id: activityId },
                 auth: {
                     username: username,
                     password: password,
                 },
             });
-            console.log('User deleted:', response.data);
-            onUserDeleted(userEmail); 
+            console.log('Activity deleted:', response.data);
+            onActivityDeleted(activityId);
         } catch (error) {
-            console.error("Error deleting user:", error);
-            alert(`Error deleting user: ${error.response ? error.response.data : error.message}`);
+            console.error("Error deleting activity:", error);
+            alert(`Error deleting activity: ${error.response ? error.response.data : error.message}`);
         }
     };
 
     return (
         <div className="delete-button-container">
             <button className="delete-button" onClick={handleDelete}>
-                Delete Users
+                Delete Activity
             </button>
 
             <style jsx>{`
@@ -62,4 +64,4 @@ const DeleteUser = ({ userEmail, onUserDeleted }) => {
     );
 };
 
-export default DeleteUser;
+export default DeleteActivity;

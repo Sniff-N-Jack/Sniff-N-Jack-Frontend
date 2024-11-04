@@ -14,14 +14,8 @@ export default function Home() {
         <Navbar/>
 
         <main>
-          <UserList/>
           <div>
-            <h1>Add User</h1>
-            <AddUserForm />
-            <h1>Add City</h1>
-            <CityForm/>
-            <h1>Add Activities</h1>
-            <ActivitiesForm/>
+
 
         </div>
 

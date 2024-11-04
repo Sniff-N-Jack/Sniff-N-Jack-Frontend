@@ -2,24 +2,24 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import DeleteUser from './DeleteUser';
 
-const API_URL = 'http://localhost:2210/users/all'; 
-const username = 'admin@test.com'; 
-const password = 'admin123'; 
+const API_URL = 'http://localhost:2210/users/all';
+const username = 'admin@test.com';
+const password = 'admin123';
 
 const fetchAllUsers = async () => {
     try {
         const response = await axios.get(API_URL, {
-            auth: {
-                username: username,
-                password: password,
-            },
+            headers: {
+                'Authorization': 'Basic ' + btoa(`${username}:${password}`)
+            }
         });
-        return response.data; 
+        return response.data;
     } catch (error) {
         console.error("Error fetching users:", error);
         throw error;
     }
 };
+
 
 const UsersList = () => {
     const [users, setUsers] = useState([]);
@@ -29,13 +29,13 @@ const UsersList = () => {
         const loadUsers = async () => {
             try {
                 const data = await fetchAllUsers();
-                setUsers(data); 
+                setUsers(data);
             } catch (err) {
-                setError(err); 
+                setError(err);
             }
         };
 
-        loadUsers(); 
+        loadUsers();
     }, []);
 
     const handleUserDeleted = (email) => {

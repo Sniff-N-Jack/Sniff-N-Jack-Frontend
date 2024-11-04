@@ -1,35 +1,37 @@
+// src/app/components/DeleteLocation.js
+
 import axios from 'axios';
 import React from 'react';
 
-const API_URL = 'http://localhost:2210/users/delete';
-const username = 'admin@test.com'; 
-const password = 'admin123'; 
+const API_URL = 'http://localhost:2210/locations/delete'; 
+const username = 'admin@test.com';
+const password = 'admin123';
 
-const DeleteUser = ({ userEmail, onUserDeleted }) => {
-    // Log the userEmail to see its value
-    console.log('User email to delete:', userEmail);
+const DeleteLocation = ({ locationId, onLocationDeleted }) => {
+    // Log the locationId to see its value
+    console.log('Location ID to delete:', locationId);
 
     const handleDelete = async () => {
         try {
             const response = await axios.delete(API_URL, {
-                params: { email: userEmail },
+                params: { id: locationId }, 
                 auth: {
                     username: username,
                     password: password,
                 },
             });
-            console.log('User deleted:', response.data);
-            onUserDeleted(userEmail); 
+            console.log('Location deleted:', response.data);
+            onLocationDeleted(locationId); 
         } catch (error) {
-            console.error("Error deleting user:", error);
-            alert(`Error deleting user: ${error.response ? error.response.data : error.message}`);
+            console.error("Error deleting location:", error);
+            alert(`Error deleting location: ${error.response ? error.response.data : error.message}`);
         }
     };
 
     return (
         <div className="delete-button-container">
             <button className="delete-button" onClick={handleDelete}>
-                Delete Users
+                Delete Location
             </button>
 
             <style jsx>{`
@@ -62,4 +64,4 @@ const DeleteUser = ({ userEmail, onUserDeleted }) => {
     );
 };
 
-export default DeleteUser;
+export default DeleteLocation;

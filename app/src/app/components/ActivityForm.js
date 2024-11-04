@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const ActivityForm = () => {
-    const [activityName, setActivityName] = useState(''); // Correctly named to reflect its purpose
+    const [activityName, setActivityName] = useState(''); 
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
@@ -11,7 +11,7 @@ const ActivityForm = () => {
         setSuccessMessage('');
 
         try {
-            // Send the request with the activity name as a URL parameter
+            
             const response = await fetch(`http://localhost:2210/activities/add?name=${encodeURIComponent(activityName)}`, {
                 method: 'POST',
                 headers: {
@@ -24,9 +24,8 @@ const ActivityForm = () => {
                 throw new Error(data.message || 'Failed to add activity');
             }
 
-            const newActivity = await response.json(); // Corrected variable name to reflect activity
+            const newActivity = await response.json(); 
             setSuccessMessage(`Activity ${newActivity.name} added successfully!`);
-            // Reset form fields after successful submission
             setActivityName('');
         } catch (error) {
             setError(error.message);
@@ -40,14 +39,14 @@ const ActivityForm = () => {
                 <label>Activity Name:</label>
                 <input
                     type="text"
-                    value={activityName} // Correct variable usage
-                    onChange={(e) => setActivityName(e.target.value)} // Corrected state update
+                    value={activityName} 
+                    onChange={(e) => setActivityName(e.target.value)} 
                     required
                 />
             </div>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-            <button type="submit">Add Activity</button> {/* Updated button text */}
+            <button type="submit">Add Activity</button>
         </form>
     );
 };

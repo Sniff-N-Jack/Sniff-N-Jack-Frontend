@@ -11,7 +11,7 @@ const CityForm = () => {
         setSuccessMessage('');
 
         try {
-            // Send the request with the city name as a URL parameter
+            
             const response = await fetch(`http://localhost:2210/cities/add?name=${encodeURIComponent(cityName)}`, {
                 method: 'POST',
                 headers: {
@@ -26,7 +26,7 @@ const CityForm = () => {
 
             const newCity = await response.json();
             setSuccessMessage(`City ${newCity.name} added successfully!`);
-            // Reset form fields after successful submission
+            
             setCityName('');
         } catch (error) {
             setError(error.message);

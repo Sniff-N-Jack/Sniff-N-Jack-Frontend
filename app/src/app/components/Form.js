@@ -5,8 +5,8 @@ const AddUserForm = () => {
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [phone, setPhone] = useState(''); // Added phone field
-    const [age, setAge] = useState(''); // Added age field
+    const [phone, setPhone] = useState(''); 
+    const [age, setAge] = useState('');
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
@@ -15,14 +15,14 @@ const AddUserForm = () => {
         setError('');
         setSuccessMessage('');
 
-        // Create the user object specifically for clients
+        
         const user = {
             firstName,
             lastName,
             email,
-            password, // Include the password
-            phone, // Include the phone number
-            age: Number(age), // Convert age to number
+            password,
+            phone,
+            age: Number(age),
         };
 
         try {
@@ -41,11 +41,10 @@ const AddUserForm = () => {
 
             const newUser = await response.json();
             setSuccessMessage(`Client ${newUser.firstName} added successfully!`);
-            // Reset form fields after successful submission
             setFirstName('');
             setLastName('');
             setEmail('');
-            setPassword(''); 
+            setPassword('');
             setPhone('');
             setAge('');
         } catch (error) {
@@ -86,7 +85,7 @@ const AddUserForm = () => {
             <div>
                 <label>Password:</label>
                 <input
-                    type="password" // Use password type for security
+                    type="password" 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
