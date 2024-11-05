@@ -17,10 +17,16 @@ const DeleteCity = ({ cityName, onCityDeleted }) => {
                     password: password,
                 },
             });
-            console.log('City deleted:', response.data);
-            onCityDeleted(cityName);
+
+            if (response.status === 200) {
+                console.log('City deleted:', response.data);
+                onCityDeleted(cityName);
+            } else {
+                console.error('Unexpected response:', response);
+            }
         } catch (error) {
             console.error("Error deleting city:", error);
+            // Ensure we provide a user-friendly message
             alert(`Error deleting city: ${error.response ? error.response.data.message : error.message}`);
         }
     };

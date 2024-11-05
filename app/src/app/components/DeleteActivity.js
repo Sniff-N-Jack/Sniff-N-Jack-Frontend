@@ -1,27 +1,26 @@
-// src/app/components/DeleteActivity.js
-
 import axios from 'axios';
 import React from 'react';
 
-const API_URL = 'http://localhost:2210/activities/delete'; 
+const API_URL = 'http://localhost:2210/activities/delete';
 const username = 'admin@test.com';
 const password = 'admin123';
 
-const DeleteActivity = ({ activityId, onActivityDeleted }) => {
-    // Log the activityId to see its value
-    console.log('Activity ID to delete:', activityId);
+const DeleteActivity = ({ activityName, onActivityDeleted }) => {
+    // Log the activityName to see its value
+    console.log('Activity name to delete:', activityName);
 
     const handleDelete = async () => {
         try {
             const response = await axios.delete(API_URL, {
-                params: { id: activityId },
+                params: { name: activityName }, // Use `name` as required by the backend
                 auth: {
                     username: username,
                     password: password,
                 },
             });
             console.log('Activity deleted:', response.data);
-            onActivityDeleted(activityId);
+            // Call the onActivityDeleted function to update the UI
+            onActivityDeleted(activityName);
         } catch (error) {
             console.error("Error deleting activity:", error);
             alert(`Error deleting activity: ${error.response ? error.response.data : error.message}`);

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import DeleteActivity from './DeleteActivity'; 
+import DeleteActivity from './DeleteActivity';
 
 const ActivityList = () => {
     const [activities, setActivities] = useState([]);
@@ -25,8 +25,8 @@ const ActivityList = () => {
         fetchActivities();
     }, []);
 
-    const handleActivityDeleted = (deletedActivityId) => {
-        setActivities(activities.filter(activity => activity.id !== deletedActivityId));
+    const handleActivityDeleted = (deletedActivityName) => {
+        setActivities(activities.filter(activity => activity.name !== deletedActivityName));
     };
 
     if (loading) {
@@ -52,7 +52,7 @@ const ActivityList = () => {
                         <tr key={activity.id}>
                             <td>{activity.name}</td>
                             <td>
-                                <DeleteActivity activityId={activity.id} onActivityDeleted={handleActivityDeleted} />
+                                <DeleteActivity activityName={activity.name} onActivityDeleted={handleActivityDeleted} />
                             </td>
                         </tr>
                     ))}
