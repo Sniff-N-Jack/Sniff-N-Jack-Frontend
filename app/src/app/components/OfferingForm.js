@@ -8,8 +8,8 @@ const AddOfferingForm = () => {
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
     const [dayOfWeek, setDayOfWeek] = useState('');
-    const [instructors, setInstructors] = useState([]); // Changed from users to instructors
-    const [selectedInstructor, setSelectedInstructor] = useState(''); // Changed from selectedUser to selectedInstructor
+    const [instructors, setInstructors] = useState([]); // Keeping the instructors state
+    const [selectedInstructor, setSelectedInstructor] = useState(''); // Instructor state
     const [activities, setActivities] = useState([]);
     const [selectedActivity, setSelectedActivity] = useState('');
     const [locations, setLocations] = useState([]);
@@ -19,9 +19,9 @@ const AddOfferingForm = () => {
     useEffect(() => {
         const fetchInstructors = async () => {
             try {
-                const response = await axios.get('http://localhost:2210/instructors/all'); // Update endpoint for instructors
-                console.log('Fetched instructors:', response.data); // Log the fetched instructors
-                setInstructors(response.data); // Set the instructors state
+                const response = await axios.get('http://localhost:2210/instructors/all');
+                console.log('Fetched instructors:', response.data);
+                setInstructors(response.data);
             } catch (error) {
                 console.error('Error fetching instructors:', error);
             }
@@ -45,7 +45,7 @@ const AddOfferingForm = () => {
             }
         };
 
-        fetchInstructors(); // Fetch instructors instead of users
+        fetchInstructors();
         fetchActivities();
         fetchLocations();
     }, []);
@@ -53,6 +53,7 @@ const AddOfferingForm = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        // Set instructor to null explicitly when no instructor is selected
         const offeringData = {
             totalSpots,
             startDate,
@@ -60,7 +61,7 @@ const AddOfferingForm = () => {
             startTime,
             endTime,
             dayOfWeek,
-            instructor: { id: selectedInstructor }, // Updated to use selectedInstructor
+            instructor: selectedInstructor ? { id: selectedInstructor } : null, // Set to null if no instructor is selected
             activity: { id: selectedActivity },
             location: { id: selectedLocation },
         };
@@ -146,13 +147,18 @@ const AddOfferingForm = () => {
                     required
                 />
             </div>
+
             <div>
                 <label htmlFor="instructor">Select Instructor:</label>
-                <select id="instructor" value={selectedInstructor} onChange={(e) => setSelectedInstructor(e.target.value)}>
-                    <option value="">Select an instructor</option>
+                <select
+                    id="instructor"
+                    value={selectedInstructor}
+                    onChange={(e) => setSelectedInstructor(e.target.value)}
+                >
+                    <option value="">Select an instructor (or leave empty)</option>
                     {instructors.map(instructor => (
                         <option key={instructor.id} value={instructor.id}>
-                            {instructor.firstName} {instructor.lastName} {/* Adjust according to the properties for names */}
+                            {instructor.firstName} {instructor.lastName}
                         </option>
                     ))}
                 </select>
@@ -160,22 +166,31 @@ const AddOfferingForm = () => {
 
             <div>
                 <label htmlFor="activity">Select Activity:</label>
-                <select id="activity" value={selectedActivity} onChange={(e) => setSelectedActivity(e.target.value)}>
+                <select
+                    id="activity"
+                    value={selectedActivity}
+                    onChange={(e) => setSelectedActivity(e.target.value)}
+                >
                     <option value="">Select an activity</option>
                     {activities.map(activity => (
                         <option key={activity.id} value={activity.id}>
-                            {activity.name} {/* Adjust according to the property that holds the activity's name */}
+                            {activity.name}
                         </option>
                     ))}
                 </select>
             </div>
+
             <div>
                 <label htmlFor="location">Select Location:</label>
-                <select id="location" value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)}>
+                <select
+                    id="location"
+                    value={selectedLocation}
+                    onChange={(e) => setSelectedLocation(e.target.value)}
+                >
                     <option value="">Select a location</option>
                     {locations.map(location => (
                         <option key={location.id} value={location.id}>
-                            {location.address} {/* Adjust according to the property that holds the location's address */}
+                            {location.address}
                         </option>
                     ))}
                 </select>
