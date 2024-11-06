@@ -12,11 +12,11 @@ const AddLocationForm = () => {
     const [existingLocations, setExistingLocations] = useState([]);
 
     useEffect(() => {
-        // Fetch the list of cities from your backend API
+
         const fetchCities = async () => {
             try {
-                const response = await axios.get('http://localhost:2210/cities/all'); 
-                setCities(response.data); 
+                const response = await axios.get('http://localhost:2210/cities/all');
+                setCities(response.data);
             } catch (error) {
                 console.error('Error fetching cities:', error);
             }
@@ -24,8 +24,8 @@ const AddLocationForm = () => {
 
         const fetchExistingLocations = async () => {
             try {
-                const response = await axios.get('http://localhost:2210/locations'); 
-                setExistingLocations(response.data); 
+                const response = await axios.get('http://localhost:2210/locations');
+                setExistingLocations(response.data);
             } catch (error) {
                 console.error('Error fetching existing locations:', error);
             }
@@ -36,26 +36,26 @@ const AddLocationForm = () => {
     }, []);
 
     const handleCityChange = (event) => {
-        setSelectedCity(event.target.value); 
+        setSelectedCity(event.target.value);
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Check if the location already exists
-        const locationExists = existingLocations.some(loc => 
+
+        const locationExists = existingLocations.some(loc =>
             loc.address === address && loc.room === room && loc.city.name === selectedCity
         );
 
         if (locationExists) {
-            alert('This location already exists!'); 
-            return; 
+            alert('This location already exists!');
+            return;
         }
 
         const locationData = {
             address,
             room,
-            city: { name: selectedCity }, 
+            city: { name: selectedCity },
         };
 
         try {
@@ -66,11 +66,11 @@ const AddLocationForm = () => {
                 },
             });
             console.log('Location added:', response.data);
-            setSuccessMessage('Location added successfully!'); 
+            setSuccessMessage('Location added successfully!');
             setAddress('');
             setRoom('');
             setSelectedCity('');
-            setExistingLocations([...existingLocations, response.data]); 
+            setExistingLocations([...existingLocations, response.data]);
         } catch (error) {
             console.error('Error adding location:', error);
         }

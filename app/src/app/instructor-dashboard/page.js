@@ -11,8 +11,7 @@ export default function InstructorDashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [filteredOfferings, setFilteredOfferings] = useState([]);
-    const [statusMessage, setStatusMessage] = useState(''); // State for status messages
-
+    const [statusMessage, setStatusMessage] = useState('');
     useEffect(() => {
         const email = searchParams.get('email');
         if (email) {
@@ -64,7 +63,6 @@ export default function InstructorDashboard() {
         }
     }, [instructorEmail]);
 
-    // Function to handle "Take Job" button click
     const takeJob = async (offering) => {
         try {
             const updatedOffering = {
@@ -81,7 +79,7 @@ export default function InstructorDashboard() {
         }
     };
 
-    // Function to handle "Release Job" button click
+
     const releaseJob = async (offering) => {
         try {
             const updatedOffering = {
@@ -104,7 +102,7 @@ export default function InstructorDashboard() {
     return (
         <div className="dashboard-container">
             <h1>Instructor Dashboard</h1>
-            {statusMessage && <p className="status-message">{statusMessage}</p>} {/* Display status message */}
+            {statusMessage && <p className="status-message">{statusMessage}</p>} 
             
             {instructorEmail ? (
                 <div>
@@ -114,23 +112,7 @@ export default function InstructorDashboard() {
                 <p>No instructor email found.</p>
             )}
 
-            {instructorData && (
-                <div className="instructor-info">
-                    <h2>Instructor's Available Cities</h2>
-                    <ul>
-                        {instructorData.availabilities && instructorData.availabilities.length > 0 ? (
-                            instructorData.availabilities.map((availability, index) => (
-                                <li key={index}>
-                                    <strong>Availability ID:</strong> {availability.id} 
-                                    <strong>City ID:</strong> {availability.id}
-                                </li>
-                            ))
-                        ) : (
-                            <p>No availabilities found.</p>
-                        )}
-                    </ul>
-                </div>
-            )}
+
 
             {filteredOfferings.length > 0 && (
                 <div className="filtered-offerings">
@@ -142,6 +124,7 @@ export default function InstructorDashboard() {
                                     This offering has {offering.totalSpots} total spots and starts on {offering.startDate} at {offering.startTime}, ending on {offering.endDate} at {offering.endTime}. It takes place on {offering.dayOfWeek}, with the activity {offering.activity.name} located in {offering.location.city.name}.
                                 </p>
                                 <button onClick={() => takeJob(offering)}>Take Job</button>
+                                <br/>
                                 <button onClick={() => releaseJob(offering)}>Release Job</button>
                             </li>
                         ))}

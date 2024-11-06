@@ -87,7 +87,7 @@ const OfferingList = () => {
             <h2>Offering List</h2>
             {offerings.map(offering => (
                 <div key={offering.id} className="offering-item">
-                    {/* Display offering details as text */}
+                    {}
                     <p>
                         This offering has {offering.totalSpots} total spots and starts on {offering.startDate} at {offering.startTime}, ending on {offering.endDate} at {offering.endTime}. It takes place on {offering.dayOfWeek}, with the activity '{activities.find(activity => activity.id === offering.activity.id)?.name}' located at {locations.find(location => location.id === offering.location.id)?.address}.
                         <br />
@@ -207,7 +207,7 @@ const OfferingList = () => {
                         </>
                     )}
 
-                    {/* Add Delete Button */}
+                    {}
                     <DeleteOffering offeringId={offering.id} onOfferingDeleted={(id) => setOfferings(offerings.filter(offering => offering.id !== id))} />
                 </div>
             ))}

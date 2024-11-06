@@ -11,15 +11,15 @@ export default function LoginPage() {
     e.preventDefault();
 
     try {
-      // Fetch user data from the API
+
       const response = await fetch('http://localhost:2210/users/all');
       const users = await response.json();
 
-      // Find the user with the entered email
+
       const user = users.find(u => u.email === email);
 
       if (user) {
-        // Redirect based on the user’s role with the user's ID in query params
+
         if (user.role.name === 'ADMIN') {
           router.push(`/admin-dashboard?email=${user.email}`);
         } else if (user.role.name === 'CLIENT') {

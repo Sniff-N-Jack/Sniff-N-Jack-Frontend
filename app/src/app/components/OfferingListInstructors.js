@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './OfferingList.css'; // Assuming your CSS file is named 'OfferingList.css'
+import './OfferingList.css';
 import DeleteOffering from './DeleteOffering';
 
 const OfferingList = () => {
@@ -12,8 +12,8 @@ const OfferingList = () => {
     const [activities, setActivities] = useState([]);
     const [locations, setLocations] = useState([]);
     const [successMessage, setSuccessMessage] = useState('');
-    const [selectedCities, setSelectedCities] = useState([]); // For cities filter
-    const [selectedActivities, setSelectedActivities] = useState([]); // For activities filter
+    const [selectedCities, setSelectedCities] = useState([]);
+    const [selectedActivities, setSelectedActivities] = useState([]); 
 
     // Fetch offerings, activities, and locations on component mount
     useEffect(() => {
@@ -51,13 +51,11 @@ const OfferingList = () => {
         fetchLocations();
     }, []);
 
-    // Handle offering updates
     const handleOfferingUpdated = (offeringId, updatedOfferingData) => {
         setOfferings(offerings.map(offering => offering.id === offeringId ? { ...offering, ...updatedOfferingData } : offering));
         setSuccessMessage('Offering updated successfully!');
     };
 
-    // Handle submitting updated offering data
     const handleSubmit = async (offeringId, updatedOfferingData) => {
         try {
             const payload = {
@@ -82,30 +80,30 @@ const OfferingList = () => {
         }
     };
 
-    // Filter the offerings based on selected cities and activities
+
     const filteredOfferings = offerings.filter(offering => {
         const matchesCity = selectedCities.length === 0 || selectedCities.includes(offering.location.id);
         const matchesActivity = selectedActivities.length === 0 || selectedActivities.includes(offering.activity.id);
         return matchesCity && matchesActivity;
     });
 
-    // Handle the change in selected cities
+
     const handleCityChange = (e) => {
         const cityId = e.target.value;
         setSelectedCities(prevState =>
             e.target.checked
-                ? [...prevState, cityId] // Add city if checked
-                : prevState.filter(id => id !== cityId) // Remove city if unchecked
+                ? [...prevState, cityId]
+                : prevState.filter(id => id !== cityId)
         );
     };
 
-    // Handle the change in selected activities
+
     const handleActivityChange = (e) => {
         const activityId = e.target.value;
         setSelectedActivities(prevState =>
             e.target.checked
-                ? [...prevState, activityId] // Add activity if checked
-                : prevState.filter(id => id !== activityId) // Remove activity if unchecked
+                ? [...prevState, activityId]
+                : prevState.filter(id => id !== activityId) 
         );
     };
 
@@ -116,7 +114,7 @@ const OfferingList = () => {
         <div className="offering-list">
             <h2>Offering List</h2>
 
-            {/* Filter section */}
+            {}
             <div className="filters">
                 <div>
                     <h3>Filter by Cities</h3>
@@ -151,10 +149,10 @@ const OfferingList = () => {
                 </div>
             </div>
 
-            {/* Display filtered offerings */}
+            {}
             {filteredOfferings.map(offering => (
                 <div key={offering.id} className="offering-item">
-                    {/* Display offering details as text */}
+                    {}
                     <p>
                         This offering has {offering.totalSpots} total spots and starts on {offering.startDate} at {offering.startTime}, ending on {offering.endDate} at {offering.endTime}. It takes place on {offering.dayOfWeek}, with the activity '{activities.find(activity => activity.id === offering.activity.id)?.name}' located at {locations.find(location => location.id === offering.location.id)?.address}.
                         <br />
@@ -274,7 +272,7 @@ const OfferingList = () => {
                         </>
                     )}
 
-                    {/* Add Delete Button */}
+                    {}
                     <DeleteOffering offeringId={offering.id} onOfferingDeleted={(id) => setOfferings(offerings.filter(offering => offering.id !== id))} />
                 </div>
             ))}
