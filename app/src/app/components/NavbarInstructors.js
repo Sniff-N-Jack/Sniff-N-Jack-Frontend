@@ -12,11 +12,6 @@ export default function Navbar() {
             <ul>
                 <li onClick={() => navigateTo('/')}>Home</li>
                 <li onClick={() => navigateTo('/lessons')}>Lessons</li>
-                <li onClick={() => navigateTo('/instructors')}>Instructors</li>
-                <li onClick={() => navigateTo('/locations')}>Locations</li>
-                <li onClick={() => navigateTo('/clients')}>Clients</li>
-                <li onClick={() => navigateTo('/cities')}>Cities</li>
-                <li onClick={() => navigateTo('/activities')}>Activities</li>
             </ul>
 
             {/* Styled JSX for scoped CSS */}

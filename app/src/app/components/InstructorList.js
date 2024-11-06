@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import DeleteUser from './DeleteUser';
 
-const API_URL = 'http://localhost:2210/clients/all';
+const API_URL = 'http://localhost:2210/instructors/all';
 const username = 'admin@test.com';
 const password = 'admin123';
 
