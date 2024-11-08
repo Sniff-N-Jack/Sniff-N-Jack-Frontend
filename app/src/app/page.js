@@ -15,38 +15,42 @@ export default function LoginPage() {
     setError(null); // Clear any previous error messages
 
     try {
+      try {
         const response = await axios.get("http://localhost:2210/users/login", {
             params: {
               email: email,
               password: password
             }
         });
-        if (response.data.message) {
-            setError(response.data.message);
-        } else {
-          const role = response.data.role.name;
-            localStorage.setItem("userId", response.data.id);
-            localStorage.setItem("userEmail", email);
-            localStorage.setItem("userPassword", password);
-            localStorage.setItem("userRole", role);
-            
-            switch (role) {
-              case "ADMIN":
-                router.push('/admin-dashboard?email=${email}');
-                break;
-              case "CLIENT":
-                router.push('/client-dashboard?email=${email}');
-                break;
-              case "INSTRUCTOR":
-                router.push('/instructor-dashboard?email=${email}');
-                break;
-              default:
-                setError("Invalid role. Please try again.");
-                break;
-            }
-        }
+      } catch (error) {
+        setError(error.response.data.message);
+        return;
+      }
+
+      const role = response.data.role.name;
+      localStorage.setItem("userId", response.data.id);
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("userPassword", password);
+      localStorage.setItem("userRole", role);
+      
+      switch (role) {
+        case "ADMIN":
+          router.push('/admin-dashboard?email=${email}');
+          break;
+        case "CLIENT":
+          router.push('/client-dashboard?email=${email}');
+          break;
+        case "INSTRUCTOR":
+          router.push('/instructor-dashboard?email=${email}');
+          break;
+        default:
+          setError("Invalid role. Please try again.");
+          return;
+      }
     } catch (error) {
-        setError("An error occurred. Please try again.");
+        if (error != null) {
+          setError("An error occurred. Please try again.");
+        }
         console.error(error);
     }
   };
