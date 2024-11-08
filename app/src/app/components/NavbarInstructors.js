@@ -14,7 +14,7 @@ export default function Navbar() {
                 <li onClick={() => navigateTo('/lessons')}>Lessons</li>
             </ul>
 
-            {/* Styled JSX for scoped CSS */}
+            
             <style jsx>{`
         ul {
         list-style: none;

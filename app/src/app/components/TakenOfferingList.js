@@ -11,7 +11,7 @@ const TakenOfferingList = () => {
             try {
                 const response = await axios.get('http://localhost:2210/offerings/all');
                 
-                // Filter offerings to include only those with a non-null instructor
+                
                 const offeringsWithInstructors = response.data.filter(offering => offering.instructor !== null);
                 
                 setOfferings(offeringsWithInstructors);

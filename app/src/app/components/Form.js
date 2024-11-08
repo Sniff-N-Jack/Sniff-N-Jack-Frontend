@@ -7,7 +7,7 @@ const AddUserForm = () => {
     const [password, setPassword] = useState('');
     const [phone, setPhone] = useState('');
     const [age, setAge] = useState('');
-    const [parentEmail, setParentEmail] = useState(''); // To hold parent's email if age < 18
+    const [parentEmail, setParentEmail] = useState(''); 
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
@@ -25,7 +25,7 @@ const AddUserForm = () => {
             age: Number(age),
         };
 
-        // If the age is under 18, check for a parent email
+        
         if (age < 18) {
             if (!parentEmail) {
                 setError('Parent email is required for clients under 18');
@@ -33,7 +33,7 @@ const AddUserForm = () => {
             }
 
             try {
-                // Fetch the parent client from the backend
+                
                 const response = await fetch('http://localhost:2210/clients/all');
                 const clients = await response.json();
                 const parent = clients.find(client => client.email === parentEmail);
@@ -43,7 +43,7 @@ const AddUserForm = () => {
                     return;
                 }
 
-                // Attach the parent client to the new user
+                
                 user.parent = parent;
 
             } catch (err) {
@@ -156,7 +156,7 @@ const AddUserForm = () => {
                 </label>
                 <br />
 
-                {/* Conditionally render the Parent Email field when age is under 18 */}
+                {/*  Parent Email field when age is under 18 */}
                 {age < 18 && (
                     <label style={styles.label}>
                         Parent's Email:

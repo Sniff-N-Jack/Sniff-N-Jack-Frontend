@@ -1,5 +1,6 @@
-"use client";
-import { useState } from 'react';
+'use client'; // Marking this as a client-side component
+
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import './page.css';
 
@@ -8,6 +9,42 @@ export default function LoginPage() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
+  // Check if the user is already logged in
+  useEffect(() => {
+    const loggedInEmail = localStorage.getItem('userEmail');
+    if (loggedInEmail) {
+      // Redirect to the appropriate dashboard based on user role
+      // Fetch user data from your backend and redirect
+      const redirectToDashboard = async () => {
+        try {
+          const response = await fetch('http://localhost:2210/users/all');
+          const users = await response.json();
+          const user = users.find(u => u.email === loggedInEmail);
+
+          if (user) {
+            if (user.role.name === 'ADMIN') {
+              router.push(`/admin-dashboard?email=${user.email}`);
+            } else if (user.role.name === 'CLIENT') {
+              router.push(`/client-dashboard?email=${user.email}`);
+            } else if (user.role.name === 'INSTRUCTOR') {
+              router.push(`/instructor-dashboard?email=${user.email}`);
+            } else {
+              setError("Role not recognized.");
+            }
+          } else {
+            setError("User not found.");
+          }
+        } catch (error) {
+          console.error("Error checking user data:", error);
+          setError("An error occurred. Please try again.");
+        }
+      };
+
+      redirectToDashboard(); // Call the function to redirect the user
+    }
+  }, [router]); // Empty dependency array ensures this only runs once when the component mounts
+
+  // Handle login form submission
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null); // Clear any previous error messages
@@ -19,7 +56,10 @@ export default function LoginPage() {
       const user = users.find(u => u.email === email);
 
       if (user) {
-        // Redirect based on role
+        // Save the email in localStorage as the "token"
+        localStorage.setItem('userEmail', email);
+
+        // Redirect based on user role
         if (user.role.name === 'ADMIN') {
           router.push(`/admin-dashboard?email=${user.email}`);
         } else if (user.role.name === 'CLIENT') {
@@ -43,8 +83,8 @@ export default function LoginPage() {
       <nav>
         <ul>
           <li onClick={() => router.push('/')}>Home</li>
-          <li onClick={() => router.push('/instructors')}>Login as Instructors</li>
-          <li onClick={() => router.push('/clients')}>Login as Clients</li>
+          <li onClick={() => router.push('/instructors')}>Create an account as Instructor</li>
+          <li onClick={() => router.push('/clients')}>Create an account as Client</li>
         </ul>
       </nav>
 

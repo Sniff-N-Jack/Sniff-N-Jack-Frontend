@@ -1,11 +1,13 @@
-"use client";
+'use client'; // Marking this as a client-side component
+
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation'; 
 import axios from 'axios';
 import './InstructorDashboard.css';
 
 export default function InstructorDashboard() {
     const searchParams = useSearchParams();
+    const router = useRouter();  
     const [instructorEmail, setInstructorEmail] = useState(null);
     const [instructorData, setInstructorData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -24,7 +26,6 @@ export default function InstructorDashboard() {
         if (instructorEmail) {
             const fetchInstructorData = async () => {
                 try {
-                    // Fetch instructor data by email
                     const instructorResponse = await axios.get(`http://localhost:2210/users/get`, {
                         params: { email: instructorEmail }
                     });
@@ -35,7 +36,7 @@ export default function InstructorDashboard() {
                         return;
                     }
 
-                    const instructorId = instructor.id;  // Retrieve the instructor ID
+                    const instructorId = instructor.id;
                     const cityIDs = instructor.availabilities.map(avail => avail.id);
                     const specializationIDs = instructor.specializations.map(spec => spec.id);
 
@@ -104,6 +105,11 @@ export default function InstructorDashboard() {
         }
     };
 
+    const logout = () => {
+        localStorage.removeItem('userEmail');
+        router.push('/');
+    };
+
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
 
@@ -137,6 +143,10 @@ export default function InstructorDashboard() {
                     </ul>
                 </div>
             )}
+            
+
+            <li onClick={logout}>Logout</li>
         </div>
     );
 }
+

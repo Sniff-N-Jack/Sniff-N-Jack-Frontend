@@ -8,8 +8,8 @@ const AddOfferingForm = () => {
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
     const [dayOfWeek, setDayOfWeek] = useState('');
-    const [instructors, setInstructors] = useState([]); // Keeping the instructors state
-    const [selectedInstructor, setSelectedInstructor] = useState(''); // Instructor state
+    const [instructors, setInstructors] = useState([]);
+    const [selectedInstructor, setSelectedInstructor] = useState('');
     const [activities, setActivities] = useState([]);
     const [selectedActivity, setSelectedActivity] = useState('');
     const [locations, setLocations] = useState([]);
@@ -53,7 +53,7 @@ const AddOfferingForm = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Set instructor to null explicitly when no instructor is selected
+        
         const offeringData = {
             totalSpots,
             startDate,
@@ -61,7 +61,7 @@ const AddOfferingForm = () => {
             startTime,
             endTime,
             dayOfWeek,
-            instructor: selectedInstructor ? { id: selectedInstructor } : null, // Set to null if no instructor is selected
+            instructor: selectedInstructor ? { id: selectedInstructor } : null, 
             activity: { id: selectedActivity },
             location: { id: selectedLocation },
         };
@@ -70,14 +70,13 @@ const AddOfferingForm = () => {
             const response = await axios.post('http://localhost:2210/offerings/add', offeringData);
             console.log('Offering added:', response.data);
             setSuccessMessage('Offering added successfully!');
-            // Reset form fields
             setTotalSpots(0);
             setStartDate('');
             setEndDate('');
             setStartTime('');
             setEndTime('');
             setDayOfWeek('');
-            setSelectedInstructor(''); // Reset selectedInstructor
+            setSelectedInstructor('');
             setSelectedActivity('');
             setSelectedLocation('');
         } catch (error) {

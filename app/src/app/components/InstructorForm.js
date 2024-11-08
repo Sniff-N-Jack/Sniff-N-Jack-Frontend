@@ -15,7 +15,7 @@ export default function InstructorForm() {
     const [success, setSuccess] = useState(null);
 
     useEffect(() => {
-        // Fetch cities and activities on component load
+        
         const fetchData = async () => {
             try {
                 const citiesResponse = await fetch('http://localhost:2210/cities/all');
@@ -43,9 +43,9 @@ export default function InstructorForm() {
             email,
             password,
             phone,
-            age: parseInt(age, 10), // Ensure age is sent as a number
-            specializations: specializations.map(activity => ({ name: activity })), // Transform selected activities to required format
-            availabilities: availabilities.map(city => ({ name: city })), // Transform selected cities to required format
+            age: parseInt(age, 10), 
+            specializations: specializations.map(activity => ({ name: activity })),
+            availabilities: availabilities.map(city => ({ name: city })), 
         };
 
         try {

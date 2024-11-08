@@ -11,7 +11,7 @@ const DeleteOffering = ({ offeringId, onOfferingDeleted }) => {
     const handleDelete = async () => {
         try {
             const response = await axios.delete(API_URL, {
-                params: { id: offeringId }, // Passing the offering ID as a query parameter
+                params: { id: offeringId }, 
                 auth: {
                     username: username,
                     password: password,
@@ -20,13 +20,13 @@ const DeleteOffering = ({ offeringId, onOfferingDeleted }) => {
 
             if (response.status === 200) {
                 console.log('Offering deleted:', response.data);
-                onOfferingDeleted(offeringId); // Notify parent to update the list
+                onOfferingDeleted(offeringId); 
             } else {
                 console.error('Unexpected response:', response);
             }
         } catch (error) {
             console.error('Error deleting offering:', error);
-            // Provide user-friendly error message
+            
             alert(`Error deleting offering: ${error.response ? error.response.data.message : error.message}`);
         }
     };

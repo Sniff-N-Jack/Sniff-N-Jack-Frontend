@@ -6,20 +6,20 @@ const username = 'admin@test.com';
 const password = 'admin123';
 
 const DeleteActivity = ({ activityName, onActivityDeleted }) => {
-    // Log the activityName to see its value
+    
     console.log('Activity name to delete:', activityName);
 
     const handleDelete = async () => {
         try {
             const response = await axios.delete(API_URL, {
-                params: { name: activityName }, // Use `name` as required by the backend
+                params: { name: activityName },
                 auth: {
                     username: username,
                     password: password,
                 },
             });
             console.log('Activity deleted:', response.data);
-            // Call the onActivityDeleted function to update the UI
+            
             onActivityDeleted(activityName);
         } catch (error) {
             console.error("Error deleting activity:", error);
