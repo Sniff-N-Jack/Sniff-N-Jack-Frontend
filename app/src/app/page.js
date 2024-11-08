@@ -1,10 +1,12 @@
 "use client";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 import './page.css';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const router = useRouter();
 
@@ -13,28 +15,39 @@ export default function LoginPage() {
     setError(null); // Clear any previous error messages
 
     try {
-      const response = await fetch('http://localhost:2210/users/all');
-      const users = await response.json();
-
-      const user = users.find(u => u.email === email);
-
-      if (user) {
-        // Redirect based on role
-        if (user.role.name === 'ADMIN') {
-          router.push(`/admin-dashboard?email=${user.email}`);
-        } else if (user.role.name === 'CLIENT') {
-          router.push(`/client-dashboard?email=${user.email}`);
-        } else if (user.role.name === 'INSTRUCTOR') {
-          router.push(`/instructor-dashboard?email=${user.email}`);
+        const response = await axios.get("http://localhost:2210/users/login", {
+            params: {
+              email: email,
+              password: password
+            }
+        });
+        if (response.data.message) {
+            setError(response.data.message);
         } else {
-          setError("Role not recognized.");
+          const role = response.data.role.name;
+            localStorage.setItem("userId", response.data.id);
+            localStorage.setItem("userEmail", email);
+            localStorage.setItem("userPassword", password);
+            localStorage.setItem("userRole", role);
+            
+            switch (role) {
+              case "ADMIN":
+                router.push('/admin-dashboard?email=${email}');
+                break;
+              case "CLIENT":
+                router.push('/client-dashboard?email=${email}');
+                break;
+              case "INSTRUCTOR":
+                router.push('/instructor-dashboard?email=${email}');
+                break;
+              default:
+                setError("Invalid role. Please try again.");
+                break;
+            }
         }
-      } else {
-        setError("User not found.");
-      }
     } catch (error) {
-      setError("An error occurred. Please try again.");
-      console.error(error);
+        setError("An error occurred. Please try again.");
+        console.error(error);
     }
   };
 
@@ -56,6 +69,14 @@ export default function LoginPage() {
           id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <label htmlFor="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           required
         />
         <button type="submit">Login</button>
