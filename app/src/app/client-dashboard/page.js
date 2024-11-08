@@ -2,21 +2,21 @@
 
 import Head from "next/head";
 import Navbar from "../components/NavbarClients";
+import TakenOfferingList from "../components/TakenOfferingList";
+
 export default function Home() {
     return (
-        <div >
+        <div>
             <Head>
-                <title>Client Management</title>
+                <title>Offerings Page</title>
             </Head>
+            
             <Navbar />
-
+            
             <main>
-                <div>
-
-
-                </div>
-
+                <TakenOfferingList />
             </main>
+
         </div>
     );
 }

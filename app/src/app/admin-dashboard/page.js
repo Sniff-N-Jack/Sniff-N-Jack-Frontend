@@ -8,14 +8,15 @@ export default function Home() {
         <div >
             <Head>
                 <title>Admin Management</title>
+                
             </Head>
             
     
 
             <main>
                 <div>
-
-                <InstructorForm/>
+                <Navbar/>
+                
                 </div>
 
             </main>

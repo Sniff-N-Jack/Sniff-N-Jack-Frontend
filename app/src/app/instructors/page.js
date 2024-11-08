@@ -1,4 +1,14 @@
 // src/app/about/page.js
+"use client";
+import InstructorForm from "../components/InstructorForm";
+
 export default function About() {
-    return <h1>Instructors</h1>;
+    return (
+        <div>
+
+            <h1>Add User</h1>
+            <InstructorForm />
+
+        </div>
+    );
 }

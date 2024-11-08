@@ -12,6 +12,7 @@ export default function InstructorDashboard() {
     const [error, setError] = useState('');
     const [filteredOfferings, setFilteredOfferings] = useState([]);
     const [statusMessage, setStatusMessage] = useState('');
+
     useEffect(() => {
         const email = searchParams.get('email');
         if (email) {
@@ -23,11 +24,10 @@ export default function InstructorDashboard() {
         if (instructorEmail) {
             const fetchInstructorData = async () => {
                 try {
+                    // Fetch instructor data by email
                     const instructorResponse = await axios.get(`http://localhost:2210/users/get`, {
                         params: { email: instructorEmail }
                     });
-
-                    console.log('Instructor data response:', instructorResponse);
 
                     const instructor = instructorResponse.data;
                     if (!instructor || instructor.length === 0) {
@@ -35,18 +35,27 @@ export default function InstructorDashboard() {
                         return;
                     }
 
+                    const instructorId = instructor.id;  // Retrieve the instructor ID
                     const cityIDs = instructor.availabilities.map(avail => avail.id);
                     const specializationIDs = instructor.specializations.map(spec => spec.id);
 
                     const filterOfferings = async () => {
                         const offeringsResponse = await axios.get(`http://localhost:2210/offerings/all`);
-                        const filtered = offeringsResponse.data.filter(offering => {
+                        
+                        // First filter: offerings where instructor is either null or the current instructor
+                        const firstFiltered = offeringsResponse.data.filter(offering => {
+                            return !offering.instructor || offering.instructor.id === instructorId;
+                        });
+
+                        // Second filter: filter by cityIDs and specializationIDs
+                        const finalFiltered = firstFiltered.filter(offering => {
                             return (
                                 cityIDs.includes(offering.location.city.id) &&
                                 specializationIDs.includes(offering.activity.id)
                             );
                         });
-                        setFilteredOfferings(filtered);
+
+                        setFilteredOfferings(finalFiltered);
                     };
 
                     filterOfferings();
@@ -79,7 +88,6 @@ export default function InstructorDashboard() {
         }
     };
 
-
     const releaseJob = async (offering) => {
         try {
             const updatedOffering = {
@@ -111,8 +119,6 @@ export default function InstructorDashboard() {
             ) : (
                 <p>No instructor email found.</p>
             )}
-
-
 
             {filteredOfferings.length > 0 && (
                 <div className="filtered-offerings">

@@ -6,7 +6,6 @@ import UsersList from "../components/UserList";
 export default function About() {
     return (
         <div>
-            <UsersList/>
             <h1>Add User</h1>
             <AddUserForm />
 
