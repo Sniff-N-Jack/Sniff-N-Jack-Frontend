@@ -49,7 +49,8 @@ const CreateBookingButton = ({ offeringId, clientId, onBookingSuccess }) => {
 
             console.log('Booking created successfully:', response.data);
             alert('Booking created successfully!');
-            
+            window.location.reload();
+
             if (onBookingSuccess) {
                 onBookingSuccess();
             }
@@ -60,7 +61,7 @@ const CreateBookingButton = ({ offeringId, clientId, onBookingSuccess }) => {
 
         } catch (err) {
             console.error("Error creating booking:", err);
-            
+
             // Perform a check for duplicate booking
             await checkForExistingBooking();
         }
@@ -70,10 +71,10 @@ const CreateBookingButton = ({ offeringId, clientId, onBookingSuccess }) => {
         try {
             const response = await axios.get('http://localhost:2210/bookings/all');
             const bookings = response.data;
-            
+
             // Check if a booking exists with the same offering and client (or parent) ID
             const existingBooking = bookings.find(
-                (booking) => 
+                (booking) =>
                     booking.client.id === (isMinor ? parentData.id : clientId) &&
                     booking.offering.id === offeringId
             );
@@ -100,8 +101,9 @@ const CreateBookingButton = ({ offeringId, clientId, onBookingSuccess }) => {
                     onChange={(e) => setParentEmail(e.target.value)}
                     className="block w-full mb-2 p-2 border rounded"
                 />
-                <button 
+                <button
                     onClick={handleCreateBooking}
+
                     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                 >
                     Confirm Booking
@@ -111,7 +113,7 @@ const CreateBookingButton = ({ offeringId, clientId, onBookingSuccess }) => {
     }
 
     return (
-        <button 
+        <button
             onClick={handleCreateBooking}
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >

@@ -13,7 +13,6 @@ export default function InstructorDashboard() {
     const [instructorData, setInstructorData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [filteredOfferings, setFilteredOfferings] = useState([]);
     const [statusMessage, setStatusMessage] = useState('');
 
     useEffect(() => {
@@ -60,12 +59,41 @@ export default function InstructorDashboard() {
 
     return (
         <div className="dashboard-container">
-            <h1>Instructor Dashboard</h1>
-
+            <button onClick={logout} className="logout-btn">Logout</button>
             <InstructionJobs instructorEmail={instructorEmail} />
             {instructorData && <InstructorForm instructor={instructorData} />}
+            <style jsx>{`
+                .dashboard-container {
+                    padding: 20px;
+                    max-width: 900px;
+                    margin: 0 auto;
+                    font-family: Arial, sans-serif;
+                    background-color: #f9f9f9;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                }
 
-            <button onClick={logout}>Logout</button>
+                .logout-btn {
+                    background-color: #ff5f5f;
+                    color: white;
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 5px;
+                    font-size: 16px;
+                    cursor: pointer;
+                    margin-bottom: 20px;
+                    transition: background-color 0.3s ease;
+                }
+
+                .logout-btn:hover {
+                    background-color: #e04e4e;
+                }
+
+                p {
+                    color: #555;
+                    text-align: center;
+                }
+            `}</style>
         </div>
     );
 }

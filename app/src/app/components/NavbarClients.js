@@ -11,7 +11,7 @@ export default function Navbar() {
         <nav>
             <ul>
                 <li onClick={() => navigateTo('/')}>Home</li>
-                <li onClick={() => navigateTo('/lessons')}>Lessons</li>
+                <li onClick={() => navigateTo('/bookings')}>Bookings</li>
             </ul>
 
             

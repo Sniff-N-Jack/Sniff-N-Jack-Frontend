@@ -2,13 +2,13 @@
 "use client";
 import CityForm from "../components/CityForm";
 import CityList from "../components/CityList";
+import Navbar from "../components/Navbar";
 
 export default function About() {
     return (
         <div>
-            
+            <Navbar/>
             <CityList/>
-            <h1>Add City</h1>
             <CityForm/>
 
         

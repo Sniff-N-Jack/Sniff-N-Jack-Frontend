@@ -13,8 +13,6 @@ export default function LoginPage() {
   useEffect(() => {
     const loggedInEmail = localStorage.getItem('userEmail');
     if (loggedInEmail) {
-      // Redirect to the appropriate dashboard based on user role
-      // Fetch user data from your backend and redirect
       const redirectToDashboard = async () => {
         try {
           const response = await fetch('http://localhost:2210/users/all');
@@ -40,14 +38,13 @@ export default function LoginPage() {
         }
       };
 
-      redirectToDashboard(); // Call the function to redirect the user
+      redirectToDashboard();
     }
-  }, [router]); // Empty dependency array ensures this only runs once when the component mounts
+  }, [router]);
 
-  // Handle login form submission
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(null); // Clear any previous error messages
+    setError(null);
 
     try {
       const response = await fetch('http://localhost:2210/users/all');
@@ -56,7 +53,6 @@ export default function LoginPage() {
       const user = users.find(u => u.email === email);
 
       if (user) {
-        // Save the email in localStorage as the "token"
         localStorage.setItem('userEmail', email);
 
         // Redirect based on user role
@@ -82,9 +78,8 @@ export default function LoginPage() {
     <div>
       <nav>
         <ul>
-          <li onClick={() => router.push('/')}>Home</li>
-          <li onClick={() => router.push('/instructors')}>Create an account as Instructor</li>
-          <li onClick={() => router.push('/clients')}>Create an account as Client</li>
+          <li onClick={() => router.push('/createClient')}>Create an account as Instructor</li>
+          <li onClick={() => router.push('/createInstructor')}>Create an account as Client</li>
         </ul>
       </nav>
 
@@ -96,6 +91,12 @@ export default function LoginPage() {
           id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <label htmlFor="email">Password:</label>
+        <input
+          type="password"
+          id="password"
           required
         />
         <button type="submit">Login</button>

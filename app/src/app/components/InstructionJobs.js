@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-// The main component for instructor jobs
 export default function InstructionJobs({ instructorEmail }) {
     const [instructorData, setInstructorData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -28,17 +27,13 @@ export default function InstructionJobs({ instructorEmail }) {
                     const cityIDs = instructor.availabilities.map(avail => avail.id);
                     const specializationIDs = instructor.specializations.map(spec => spec.id);
 
-                    // Filter offerings based on the instructor's availabilities, specializations, and instructor's ID
                     const filterOfferings = async () => {
                         const offeringsResponse = await axios.get('http://localhost:2210/offerings/all');
                         const filtered = offeringsResponse.data.filter(offering => {
                             return (
-                                // Condition 1: Offering with no instructor and matching city and specialization
                                 (offering.instructor === null &&
                                     cityIDs.includes(offering.location.city.id) &&
                                     specializationIDs.includes(offering.activity.id)) ||
-
-                                // Condition 2: Offering assigned to the current instructor and matching city and specialization
                                 (offering.instructor && offering.instructor.id === instructor.id &&
                                     cityIDs.includes(offering.location.city.id) &&
                                     specializationIDs.includes(offering.activity.id))
@@ -60,7 +55,6 @@ export default function InstructionJobs({ instructorEmail }) {
         }
     }, [instructorEmail]);
 
-    // Function to handle "Take Job" button click
     const takeJob = async (offering) => {
         try {
             const updatedOffering = {
@@ -75,7 +69,6 @@ export default function InstructionJobs({ instructorEmail }) {
         }
     };
 
-    // Function to handle "Release Job" button click
     const releaseJob = async (offering) => {
         try {
             const updatedOffering = {
@@ -90,14 +83,13 @@ export default function InstructionJobs({ instructorEmail }) {
         }
     };
 
-    // Loading or error messages
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
 
     return (
         <div className="dashboard-container">
             <h1>Instructor Dashboard</h1>
-            {statusMessage && <p className="status-message">{statusMessage}</p>} {/* Display status message */}
+            {statusMessage && <p className="status-message">{statusMessage}</p>}
 
             {instructorEmail ? (
                 <div>
@@ -107,10 +99,9 @@ export default function InstructionJobs({ instructorEmail }) {
                 <p>No instructor email found.</p>
             )}
 
-            {/* Display filtered offerings */}
-            {filteredOfferings.length > 0 && (
+            {filteredOfferings.length > 0 ? (
                 <div className="filtered-offerings">
-                    <h2>Filtered Offerings</h2>
+                    <h2>Here are the jobs available in your specializations: {instructorData.specializations.map(spec => spec.name).join(', ')} and availabilities: {instructorData.availabilities.map(avail => avail.name).join(', ')}.</h2>
                     <ul>
                         {filteredOfferings.map((offering, index) => (
                             <li key={index} className="offering-item">
@@ -125,7 +116,10 @@ export default function InstructionJobs({ instructorEmail }) {
                         ))}
                     </ul>
                 </div>
+            ) : (
+                <p>No job available in your specializations: {instructorData.specializations.map(spec => spec.name).join(', ')} and availabilities: {instructorData.availabilities.map(avail => avail.name).join(', ')}.</p>
             )}
+
             <style jsx>{`
                 .dashboard-container {
                     padding: 20px;

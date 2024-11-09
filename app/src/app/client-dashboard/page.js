@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Head from "next/head";
-import Navbar from "../components/NavbarClients";
 import axios from 'axios';
 import TakenOfferingList from '../components/ClientOfferings';
+import ClientBookings from '../components/BookingList';
 
 export default function Home() {
     const router = useRouter();
@@ -38,14 +38,15 @@ export default function Home() {
         }
     }, []);
 
-    // Logout function that clears the localStorage and redirects to home
+    // Logout  redirects to home
     const logout = () => {
         localStorage.removeItem('userEmail');
         router.push('/');
     };
 
+    // Loading and error handling before the main UI
     if (loading) return <p>Loading...</p>;
-    if (error) return <p>{error}</p>;
+    if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
     return (
         <div>
@@ -53,23 +54,6 @@ export default function Home() {
                 <title>Offerings Page</title>
             </Head>
 
-            <Navbar />
-
-            <main>
-                {/* Display the clientId and associated offerings */}
-                {clientId !== null ? (
-                    <div>
-                        <h2>Your Client ID: {clientId}</h2>
-
-                        {/* Pass clientId to TakenOfferingList */}
-                        <TakenOfferingList clientId={clientId} />
-                    </div>
-                ) : (
-                    <p>Loading client information...</p>
-                )}
-            </main>
-
-            {/* Logout button (styled as a list item) */}
             <div style={{ padding: '10px' }}>
                 <button
                     onClick={logout}
@@ -81,12 +65,21 @@ export default function Home() {
                         border: 'none',
                         borderRadius: '5px',
                         fontSize: '16px',
-                        textDecoration: 'none'
                     }}
                 >
                     Logout
                 </button>
             </div>
+            <main>
+                
+                <div>
+                    <h2>Your Client ID: {clientId}</h2>
+
+                    <TakenOfferingList clientId={clientId} />
+                    <ClientBookings clientId={clientId} />
+                </div>
+            </main>
+
         </div>
     );
 }

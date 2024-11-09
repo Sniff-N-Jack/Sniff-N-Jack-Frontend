@@ -201,17 +201,7 @@ const handlePatchAvailabilities = async () => {
                     />
                 </label>
                 <br />
-
-                <label style={styles.label}>
-                    Age:
-                    <input
-                        type="number"
-                        value={age}
-                        onChange={(e) => setAge(e.target.value)}
-                        required
-                        style={styles.input}
-                    />
-                </label>
+                
                 <br />
 
                 <label style={styles.label}>

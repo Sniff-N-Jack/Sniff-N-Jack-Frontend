@@ -1,13 +1,14 @@
 // src/app/about/page.js
 "use client";
-import AddUserForm from "../components/Form";
 import UsersList from "../components/UserList";
+import Navbar from "../components/Navbar";
 
 export default function About() {
     return (
         <div>
-            <h1>Add User</h1>
-            <AddUserForm />
+            <Navbar/>
+            <h1>List of all clients</h1>
+            <UsersList />
 
         </div>
     );
