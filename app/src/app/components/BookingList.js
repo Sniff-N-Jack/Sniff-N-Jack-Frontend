@@ -52,7 +52,7 @@ const ClientBookings = ({ clientId }) => {
                     {bookings.map((booking) => (
                         <div className="booking-card" key={booking.id}>
                             <p>
-                                Offering: {booking.offering.activity.name} on {booking.offering.startDate} from {booking.offering.startTime} to {booking.offering.endTime} at {booking.offering.location.city.name}, {booking.offering.location.address} (Room: {booking.offering.location.room}). Instructor: {booking.offering.instructor.firstName} {booking.offering.instructor.lastName}, Specializations: {booking.offering.instructor.specializations.map(spec => spec.name).join(", ")}.
+                                Bookings: {booking.offering.lesson.activity.name} on {booking.offering.lesson.startDate} from {booking.offering.lesson.startTime} to {booking.offering.lesson.endTime} at {booking.offering.lesson.location.city.name}, {booking.offering.lesson.location.address} (Room: {booking.offering.lesson.location.room}). Instructor: {booking.offering.instructor.firstName} {booking.offering.instructor.lastName}, Specializations: {booking.offering.instructor.specializations.map(spec => spec.name).join(", ")}.
                             </p>
 
                             <button className="delete-btn" onClick={() => handleDelete(booking.id)}>Delete</button>

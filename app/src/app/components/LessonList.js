@@ -1,27 +1,24 @@
-// src/app/components/OfferingList.js
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './OfferingList.css';  // Assuming your CSS file is named 'OfferingList.css'
-import DeleteOffering from './DeleteOffering'; // Assuming you have a DeleteOffering component
+import './LessonList.css'; // Rename the CSS file as needed
+import DeleteLesson from './DeleteLesson'; // Rename the Delete component for lessons
 
-const OfferingList = () => {
-    const [offerings, setOfferings] = useState([]);
+const LessonList = () => {
+    const [lessons, setLessons] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [selectedOffering, setSelectedOffering] = useState(null);
+    const [selectedLesson, setSelectedLesson] = useState(null);
     const [activities, setActivities] = useState([]);
     const [locations, setLocations] = useState([]);
     const [successMessage, setSuccessMessage] = useState('');
 
-    // Fetch offerings, activities, and locations on component mount
     useEffect(() => {
-        const fetchOfferings = async () => {
+        const fetchLessons = async () => {
             try {
-                const response = await axios.get('http://localhost:2210/offerings/all');
-                setOfferings(response.data);
+                const response = await axios.get('http://localhost:2210/lessons/all');
+                setLessons(response.data);
             } catch (error) {
-                setError('Failed to fetch offerings.');
+                setError('Failed to fetch lessons.');
             } finally {
                 setLoading(false);
             }
@@ -45,79 +42,78 @@ const OfferingList = () => {
             }
         };
 
-        fetchOfferings();
+        fetchLessons();
         fetchActivities();
         fetchLocations();
     }, []);
 
-    const handleOfferingUpdated = (offeringId, updatedOfferingData) => {
-        setOfferings(offerings.map(offering => offering.id === offeringId ? { ...offering, ...updatedOfferingData } : offering));
-        setSuccessMessage('Offering updated successfully!');
+    const handleLessonUpdated = (lessonId, updatedLessonData) => {
+        setLessons(lessons.map(lesson => lesson.id === lessonId ? { ...lesson, ...updatedLessonData } : lesson));
+        setSuccessMessage('Lesson updated successfully!');
     };
 
-    const handleSubmit = async (offeringId, updatedOfferingData) => {
+    const handleSubmit = async (lessonId, updatedLessonData) => {
         try {
             const payload = {
-                id: offeringId,
-                totalSpots: updatedOfferingData.totalSpots,
-                startDate: updatedOfferingData.startDate,
-                endDate: updatedOfferingData.endDate,
-                startTime: updatedOfferingData.startTime,
-                endTime: updatedOfferingData.endTime,
-                dayOfWeek: updatedOfferingData.dayOfWeek,
-                activity: { id: updatedOfferingData.activityId },
-                location: { id: updatedOfferingData.locationId }
+                id: lessonId,
+                totalSpots: updatedLessonData.totalSpots,
+                startDate: updatedLessonData.startDate,
+                endDate: updatedLessonData.endDate,
+                startTime: updatedLessonData.startTime,
+                endTime: updatedLessonData.endTime,
+                dayOfWeek: updatedLessonData.dayOfWeek,
+                activity: { id: updatedLessonData.activityId },
+                location: { id: updatedLessonData.locationId }
             };
 
-            const response = await axios.patch('http://localhost:2210/offerings/update', payload);
-            console.log('Offering updated:', response.data);
+            const response = await axios.patch('http://localhost:2210/lessons/update', payload);
+            console.log('Lesson updateds:', response.data);
 
-            handleOfferingUpdated(offeringId, updatedOfferingData);
+            handleLessonUpdated(lessonId, updatedLessonData);
         } catch (error) {
-            console.error('Error updating offering:', error);
-            setError('Failed to update offering.');
+            console.error('Error updating lesson:', error);
+            setError('Failed to update lesson.');
         }
     };
 
-    if (loading) return <p>Loading offerings...</p>;
+    if (loading) return <p>Loading lessons...</p>;
     if (error) return <p>{error}</p>;
 
     return (
-        <div className="offering-list">
-            <h2>Offering List</h2>
-            {offerings.map(offering => (
-                <div key={offering.id} className="offering-item">
-                    {}
+        <div className="lesson-list">
+            <h2>Lesson List</h2>
+            {lessons.map(lesson => (
+                <div key={lesson.id} className="lesson-item">
                     <p>
-                        This offering has {offering.totalSpots} total spots and starts on {offering.startDate} at {offering.startTime}, ending on {offering.endDate} at {offering.endTime}. It takes place on {offering.dayOfWeek}, with the activity '{activities.find(activity => activity.id === offering.activity.id)?.name}' located at {locations.find(location => location.id === offering.location.id)?.address}.
+                        This lesson has {lesson.totalSpots} total spots and starts on {lesson.startDate} at {lesson.startTime}, ending on {lesson.endDate} at {lesson.endTime}. It takes place on {lesson.dayOfWeek}, with the activity '{activities.find(activity => activity.id === lesson.activity.id)?.name}' located at {locations.find(location => location.id === lesson.location.id)?.address}.
                         <br />
-                        <button onClick={() => setSelectedOffering(prev => (prev === offering.id ? null : offering.id))}>
-                            {selectedOffering === offering.id ? 'Hide Form' : 'Edit'}
+                        <button onClick={() => setSelectedLesson(prev => (prev === lesson.id ? null : lesson.id))}>
+                            {selectedLesson === lesson.id ? 'Hide Form' : 'Edit'}
                         </button>
                     </p>
 
-                    {selectedOffering === offering.id && (
+                    {selectedLesson === lesson.id && (
                         <>
                             <form onSubmit={(e) => {
                                 e.preventDefault();
-                                handleSubmit(offering.id, {
-                                    totalSpots: offering.totalSpots,
-                                    startDate: offering.startDate,
-                                    endDate: offering.endDate,
-                                    startTime: offering.startTime,
-                                    endTime: offering.endTime,
-                                    dayOfWeek: offering.dayOfWeek,
-                                    activityId: offering.activity.id,
-                                    locationId: offering.location.id
+                                handleSubmit(lesson.id, {
+                                    totalSpots: lesson.totalSpots,
+                                    startDate: lesson.startDate,
+                                    endDate: lesson.endDate,
+                                    startTime: lesson.startTime,
+                                    endTime: lesson.endTime,
+                                    dayOfWeek: lesson.dayOfWeek,
+                                    activityId: lesson.activity.id,
+                                    locationId: lesson.location.id
                                 });
-                            }} className="offering-form">
+                            }} className="lesson-form">
                                 <div>
                                     <label htmlFor="totalSpots">Total Spots:</label>
                                     <input
                                         type="number"
                                         id="totalSpots"
-                                        defaultValue={offering.totalSpots}
-                                        onChange={(e) => offering.totalSpots = e.target.value}
+                                        defaultValue={lesson.totalSpots}
+                                        onChange={(e) => lesson.totalSpots = e.target.value}
                                         required
                                     />
                                 </div>
@@ -126,8 +122,8 @@ const OfferingList = () => {
                                     <input
                                         type="date"
                                         id="startDate"
-                                        defaultValue={offering.startDate}
-                                        onChange={(e) => offering.startDate = e.target.value}
+                                        defaultValue={lesson.startDate}
+                                        onChange={(e) => lesson.startDate = e.target.value}
                                         required
                                     />
                                 </div>
@@ -136,8 +132,8 @@ const OfferingList = () => {
                                     <input
                                         type="date"
                                         id="endDate"
-                                        defaultValue={offering.endDate}
-                                        onChange={(e) => offering.endDate = e.target.value}
+                                        defaultValue={lesson.endDate}
+                                        onChange={(e) => lesson.endDate = e.target.value}
                                         required
                                     />
                                 </div>
@@ -146,8 +142,8 @@ const OfferingList = () => {
                                     <input
                                         type="time"
                                         id="startTime"
-                                        defaultValue={offering.startTime}
-                                        onChange={(e) => offering.startTime = e.target.value}
+                                        defaultValue={lesson.startTime}
+                                        onChange={(e) => lesson.startTime = e.target.value}
                                         required
                                     />
                                 </div>
@@ -156,8 +152,8 @@ const OfferingList = () => {
                                     <input
                                         type="time"
                                         id="endTime"
-                                        defaultValue={offering.endTime}
-                                        onChange={(e) => offering.endTime = e.target.value}
+                                        defaultValue={lesson.endTime}
+                                        onChange={(e) => lesson.endTime = e.target.value}
                                         required
                                     />
                                 </div>
@@ -166,8 +162,8 @@ const OfferingList = () => {
                                     <input
                                         type="text"
                                         id="dayOfWeek"
-                                        defaultValue={offering.dayOfWeek}
-                                        onChange={(e) => offering.dayOfWeek = e.target.value}
+                                        defaultValue={lesson.dayOfWeek}
+                                        onChange={(e) => lesson.dayOfWeek = e.target.value}
                                         required
                                     />
                                 </div>
@@ -175,8 +171,8 @@ const OfferingList = () => {
                                     <label htmlFor="activity">Activity:</label>
                                     <select
                                         id="activity"
-                                        defaultValue={offering.activity.id}
-                                        onChange={(e) => offering.activity.id = e.target.value}
+                                        defaultValue={lesson.activity.id}
+                                        onChange={(e) => lesson.activity.id = e.target.value}
                                         required
                                     >
                                         {activities.map(activity => (
@@ -190,8 +186,8 @@ const OfferingList = () => {
                                     <label htmlFor="location">Location:</label>
                                     <select
                                         id="location"
-                                        defaultValue={offering.location.id}
-                                        onChange={(e) => offering.location.id = e.target.value}
+                                        defaultValue={lesson.location.id}
+                                        onChange={(e) => lesson.location.id = e.target.value}
                                         required
                                     >
                                         {locations.map(location => (
@@ -201,18 +197,17 @@ const OfferingList = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <button type="submit">Update Offering</button>
+                                <button type="submit">Update Lesson</button>
                             </form>
                             {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
                         </>
                     )}
 
-                    {}
-                    <DeleteOffering offeringId={offering.id} onOfferingDeleted={(id) => setOfferings(offerings.filter(offering => offering.id !== id))} />
+                    <DeleteLesson lessonId={lesson.id} onLessonDeleted={(id) => setLessons(lessons.filter(lesson => lesson.id !== id))} />
                 </div>
             ))}
         </div>
     );
 };
 
-export default OfferingList;
+export default LessonList;

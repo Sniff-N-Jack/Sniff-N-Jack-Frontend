@@ -10,24 +10,12 @@ const AddOfferingForm = () => {
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
     const [dayOfWeek, setDayOfWeek] = useState('');
-    const [instructors, setInstructors] = useState([]);
-    const [selectedInstructor, setSelectedInstructor] = useState('');
     const [activities, setActivities] = useState([]);
     const [selectedActivity, setSelectedActivity] = useState('');
     const [locations, setLocations] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
-    useEffect(() => {
-        const fetchInstructors = async () => {
-            try {
-                const response = await axios.get('http://localhost:2210/instructors/all');
-                console.log('Fetched instructors:', response.data);
-                setInstructors(response.data);
-            } catch (error) {
-                console.error('Error fetching instructors:', error);
-            }
-        };
 
         const fetchActivities = async () => {
             try {
@@ -47,7 +35,7 @@ const AddOfferingForm = () => {
             }
         };
 
-        fetchInstructors();
+    useEffect(() => {
         fetchActivities();
         fetchLocations();
     }, []);
@@ -63,13 +51,12 @@ const AddOfferingForm = () => {
             startTime,
             endTime,
             dayOfWeek,
-            instructor: selectedInstructor ? { id: selectedInstructor } : null,
             activity: { id: selectedActivity },
             location: { id: selectedLocation },
         };
 
         try {
-            const response = await axios.post('http://localhost:2210/offerings/add', offeringData);
+            const response = await axios.post('http://localhost:2210/lessons/add', offeringData);
             console.log('Offering added:', response.data);
             setSuccessMessage('Offering added successfully!');
             setTotalSpots(0);
@@ -78,7 +65,6 @@ const AddOfferingForm = () => {
             setStartTime('');
             setEndTime('');
             setDayOfWeek('');
-            setSelectedInstructor('');
             setSelectedActivity('');
             setSelectedLocation('');
         } catch (error) {
@@ -154,22 +140,6 @@ const AddOfferingForm = () => {
                     <option value="FRIDAY">FRIDAY</option>
                     <option value="SATURDAY">SATURDAY</option>
                     <option value="SUNDAY">SUNDAY</option>
-                </select>
-            </div>
-
-            <div>
-                <label htmlFor="instructor">Select Instructor:</label>
-                <select
-                    id="instructor"
-                    value={selectedInstructor}
-                    onChange={(e) => setSelectedInstructor(e.target.value)}
-                >
-                    <option value="">Select an instructor (or leave empty)</option>
-                    {instructors.map(instructor => (
-                        <option key={instructor.id} value={instructor.id}>
-                            {instructor.firstName} {instructor.lastName}
-                        </option>
-                    ))}
                 </select>
             </div>
 

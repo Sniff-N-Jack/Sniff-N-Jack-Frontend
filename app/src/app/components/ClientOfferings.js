@@ -4,90 +4,82 @@ import CreateBookingButton from './CreateBookingButton';
 
 const TakenOfferingList = ({ clientId }) => {
     const [offerings, setOfferings] = useState([]);
+    const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [bookings, setBookings] = useState([]);
 
     useEffect(() => {
-        const fetchBookings = async () => {
+        const fetchOfferings = async () => {
+            setLoading(true);
             try {
-                const response = await axios.get('http://localhost:2210/bookings/getByClient', {
-                    params: { clientId }
-                });
-                setBookings(response.data);
+                const [offeringsResponse, bookingsResponse] = await Promise.all([
+                    axios.get('http://localhost:2210/offerings/all'),
+                    axios.get(`http://localhost:2210/bookings/all?clientId=${clientId}`)
+                ]);
+                setOfferings(offeringsResponse.data);  
+                setBookings(bookingsResponse.data);
+                console.log('Fetched Offerings:', offeringsResponse.data);
+                console.log('Fetched Bookings:', bookingsResponse.data);
             } catch (err) {
-                console.error("Error fetching bookings:", err);
-                setError("Failed to fetch bookings.");
+                console.error("Error fetching offerings or bookings:", err);
+                setError("Failed to fetch offerings or bookings.");
+            } finally {
+                setLoading(false);
             }
         };
 
-        fetchBookings();
+        fetchOfferings();
     }, [clientId]);
 
-    const fetchOfferings = async () => {
-        setLoading(true);
-        try {
-            const response = await axios.get('http://localhost:2210/offerings/all');
-            const offeringsWithInstructors = response.data.filter(offering => offering.instructor !== null);
-            const filteredOfferings = applyFilters(offeringsWithInstructors, bookings);
-            setOfferings(filteredOfferings);
-        } catch (err) {
-            console.error("Error fetching offerings:", err);
-            setError("Failed to fetch offerings.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const applyFilters = (offerings, bookings) => {
-        return offerings.map(offering => {
-            let isBooked = bookings.some(booking =>
-                offering.startDate === booking.offering.startDate &&
-                offering.endDate === booking.offering.endDate &&
-                offering.startTime === booking.offering.startTime &&
-                offering.endTime === booking.offering.endTime &&
-                offering.location.id === booking.offering.location.id
-            );
-            return { ...offering, isBooked };
-        });
-    };
-
     const handleBookingCreated = () => {
-        fetchOfferings(); // Refresh offerings after creating a booking
+        fetchOfferings();
     };
 
-    // Fetch offerings on mount
-    useEffect(() => {
-        fetchOfferings();
-    }, [clientId, bookings]);
+    // Check if the client has already booked an offering
+    const hasBookedOffering = (offeringId) => {
+        return bookings.some(booking => booking.offering.id === offeringId);
+    };
 
     return (
         <div className="offerings-container">
-            <h3>Offerings with Instructors</h3>
+            <h3>All Offerings</h3>
 
             {error && <p className="error-message">{error}</p>}
 
             {offerings.length > 0 ? (
                 <div className="booking-list">
-                    {offerings.map((offering, index) => (
-                        <div key={index} className={`booking-card ${offering.isBooked ? 'booked' : ''}`}>
-                            <p>
-                                This offering has {offering.totalSpots} total spots and starts on {offering.startDate} at {offering.startTime}, ending on {offering.endDate} at {offering.endTime}. It takes place on {offering.dayOfWeek}, with the activity {offering.activity.name} located in {offering.location.city.name}.
-                            </p>
-                            <p><strong>Instructor:</strong> {offering.instructor.firstName} {offering.instructor.lastName}</p>
+                    {offerings.map((offering, index) => {
+                        const isBooked = hasBookedOffering(offering.id);
 
-                            {!offering.isBooked && (
-                                <CreateBookingButton
-                                    offeringId={offering.id}
-                                    clientId={clientId}
-                                    onBookingCreated={handleBookingCreated}
-                                />
-                            )}
-                        </div>
-                    ))}
+                        return (
+                            <div
+                                key={index}
+                                className={`booking-card ${isBooked ? 'booked' : ''}`}
+                            >
+                                <p>
+                                    This offering has {offering.lesson.totalSpots} spots, starts on {offering.lesson.startDate} at {offering.lesson.startTime}, ending on {offering.lesson.endDate} at {offering.lesson.endTime}. It takes place on {offering.lesson.dayOfWeek}, with the activity {offering.lesson.activity?.name || 'N/A'} located in {offering.location?.city?.name || 'N/A'}.
+                                </p>
+                                <p><strong>Instructor:</strong> {offering.instructor?.firstName} {offering.instructor?.lastName}</p>
+
+                                {!isBooked && (
+                                    <CreateBookingButton
+                                        offeringId={offering.id}
+                                        clientId={clientId}
+                                        onBookingCreated={handleBookingCreated}
+                                    />
+                                )}
+
+                                {isBooked && (
+                                    <button className="create-booking-btn" disabled>
+                                        Already Booked
+                                    </button>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             ) : (
-                <p>No offerings available with assigned instructors.</p>
+                <p>No offerings available.</p>
             )}
 
             <style jsx>{`
@@ -156,6 +148,11 @@ const TakenOfferingList = ({ clientId }) => {
 
                 .create-booking-btn:hover {
                     background-color: #45a049;
+                }
+
+                .create-booking-btn:disabled {
+                    background-color: #d3d3d3;
+                    cursor: not-allowed;
                 }
 
                 @media (max-width: 600px) {

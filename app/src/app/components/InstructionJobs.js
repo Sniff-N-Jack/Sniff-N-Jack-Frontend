@@ -1,5 +1,3 @@
-'use client'; // Ensures the component runs on the client side
-
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -7,8 +5,9 @@ export default function InstructionJobs({ instructorEmail }) {
     const [instructorData, setInstructorData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [filteredOfferings, setFilteredOfferings] = useState([]);
+    const [filteredLessons, setFilteredLessons] = useState([]);
     const [statusMessage, setStatusMessage] = useState(''); // State for status messages
+    const [allOfferings, setAllOfferings] = useState([]); // State for all offerings
 
     useEffect(() => {
         if (instructorEmail) {
@@ -27,23 +26,24 @@ export default function InstructionJobs({ instructorEmail }) {
                     const cityIDs = instructor.availabilities.map(avail => avail.id);
                     const specializationIDs = instructor.specializations.map(spec => spec.id);
 
-                    const filterOfferings = async () => {
-                        const offeringsResponse = await axios.get('http://localhost:2210/offerings/all');
-                        const filtered = offeringsResponse.data.filter(offering => {
+                    const filterLessons = async () => {
+                        const lessonsResponse = await axios.get('http://localhost:2210/lessons/all');
+                        const filtered = lessonsResponse.data.filter(lesson => {
                             return (
-                                (offering.instructor === null &&
-                                    cityIDs.includes(offering.location.city.id) &&
-                                    specializationIDs.includes(offering.activity.id)) ||
-                                (offering.instructor && offering.instructor.id === instructor.id &&
-                                    cityIDs.includes(offering.location.city.id) &&
-                                    specializationIDs.includes(offering.activity.id))
+                                cityIDs.includes(lesson.location.city.id) &&
+                                specializationIDs.includes(lesson.activity.id)
                             );
                         });
-                        setFilteredOfferings(filtered);
+                        setFilteredLessons(filtered);
                     };
 
-                    filterOfferings();
+                    filterLessons();
                     setInstructorData(instructor);
+
+                    
+                    const offeringsResponse = await axios.get('http://localhost:2210/offerings/all');
+                    setAllOfferings(offeringsResponse.data);
+
                 } catch (err) {
                     setError('Error fetching instructor data.');
                     console.error(err);
@@ -55,32 +55,55 @@ export default function InstructionJobs({ instructorEmail }) {
         }
     }, [instructorEmail]);
 
-    const takeJob = async (offering) => {
+    const takeJob = async (lesson) => {
         try {
-            const updatedOffering = {
-                ...offering,
-                instructor: { id: instructorData.id }
-            };
-            await axios.patch('http://localhost:2210/offerings/update', updatedOffering);
-            setStatusMessage(`You have successfully taken the job for ${offering.activity.name}.`);
+            const lessonId = lesson.id;
+            const instructorId = instructorData.id;
+
+            
+            await axios.post(`http://localhost:2210/offerings/add?lessonId=${lessonId}&instructorId=${instructorId}`, null, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            setStatusMessage(`You have successfully taken the job for ${lesson.activity.name}.`);
+            window.location.reload();
         } catch (error) {
             console.error('Error taking job:', error);
             setError('Error taking the job.');
         }
     };
 
-    const releaseJob = async (offering) => {
+    const releaseJob = async (offeringId) => {
         try {
-            const updatedOffering = {
-                ...offering,
-                instructor: null
-            };
-            await axios.patch('http://localhost:2210/offerings/update', updatedOffering);
-            setStatusMessage(`You have successfully released the job for ${offering.activity.name}.`);
+            const response = await axios.delete('http://localhost:2210/offerings/delete', {
+                params: { id: offeringId }
+            });
+
+            if (response.status === 200) {
+                setStatusMessage(`You have successfully released the job.`);
+                window.location.reload();
+            } else {
+                setError('Failed to release the job. Please try again.');
+            }
         } catch (error) {
             console.error('Error releasing job:', error);
             setError('Error releasing the job.');
         }
+    };
+
+    const getOfferingIdForLesson = (lessonId) => {
+        const offering = allOfferings.find(offering => offering.lesson.id === lessonId);
+        return offering ? offering.id : null;
+    };
+
+    const isTaken = (lessonId) => {
+        return allOfferings.some(offering => offering.lesson.id === lessonId);
+    };
+
+    const isTakenByUs = (lessonId) => {
+        return allOfferings.some(offering => offering.lesson.id === lessonId && offering.instructor.id === instructorData.id);
     };
 
     if (loading) return <p>Loading...</p>;
@@ -99,27 +122,37 @@ export default function InstructionJobs({ instructorEmail }) {
                 <p>No instructor email found.</p>
             )}
 
-            {filteredOfferings.length > 0 ? (
-                <div className="filtered-offerings">
+            {filteredLessons.length > 0 ? (
+                <div className="filtered-lessons">
                     <h2>Here are the jobs available in your specializations: {instructorData.specializations.map(spec => spec.name).join(', ')} and availabilities: {instructorData.availabilities.map(avail => avail.name).join(', ')}.</h2>
                     <ul>
-                        {filteredOfferings.map((offering, index) => (
-                            <li key={index} className="offering-item">
-                                <p>
-                                    This offering has {offering.totalSpots} total spots and starts on {offering.startDate} at {offering.startTime}, ending on {offering.endDate} at {offering.endTime}. It takes place on {offering.dayOfWeek}, with the activity {offering.activity.name} located in {offering.location.city.name}.
-                                </p>
-                                <div className="offering-buttons">
-                                    <button onClick={() => takeJob(offering)} className="take-job-btn">Take Job</button>
-                                    <button onClick={() => releaseJob(offering)} className="release-job-btn">Release Job</button>
-                                </div>
-                            </li>
-                        ))}
+                        {filteredLessons.map((lesson, index) => {
+                            const taken = isTaken(lesson.id);
+                            const takenByUs = isTakenByUs(lesson.id);
+                            const offeringId = getOfferingIdForLesson(lesson.id);
+
+                            return (
+                                <li key={index} className="lesson-item">
+                                    <p>
+                                        This lesson has {lesson.totalSpots} total spots and starts on {lesson.startDate} at {lesson.startTime}, ending on {lesson.endDate} at {lesson.endTime}. It takes place on {lesson.dayOfWeek}, with the activity {lesson.activity.name} located in {lesson.location.city.name}.
+                                    </p>
+                                    <div className="lesson-buttons">
+                                        {!taken ? (
+                                            <button onClick={() => takeJob(lesson)} className="take-job-btn">Take Job</button>
+                                        ) : takenByUs ? (
+                                            <button onClick={() => offeringId && releaseJob(offeringId)} className="release-job-btn">Release Job</button>
+                                        ) : (
+                                            <button disabled className="taken-btn">Job Taken</button>
+                                        )}
+                                    </div>
+                                </li>
+                            );
+                        })}
                     </ul>
                 </div>
             ) : (
                 <p>No job available in your specializations: {instructorData.specializations.map(spec => spec.name).join(', ')} and availabilities: {instructorData.availabilities.map(avail => avail.name).join(', ')}.</p>
             )}
-
             <style jsx>{`
                 .dashboard-container {
                     padding: 20px;
@@ -143,7 +176,7 @@ export default function InstructionJobs({ instructorEmail }) {
                     border-radius: 5px;
                 }
 
-                .filtered-offerings {
+                .filtered-lessons {
                     margin-top: 20px;
                     background-color: white;
                     padding: 15px;
@@ -151,7 +184,7 @@ export default function InstructionJobs({ instructorEmail }) {
                     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
                 }
 
-                .filtered-offerings h2 {
+                .filtered-lessons h2 {
                     font-size: 24px;
                     margin-bottom: 10px;
                     color: #4CAF50;
@@ -162,17 +195,17 @@ export default function InstructionJobs({ instructorEmail }) {
                     padding: 0;
                 }
 
-                .offering-item {
+                .lesson-item {
                     border-bottom: 1px solid #ddd;
                     padding: 10px 0;
                     margin-bottom: 10px;
                 }
 
-                .offering-item:last-child {
+                .lesson-item:last-child {
                     border-bottom: none;
                 }
 
-                .offering-buttons {
+                .lesson-buttons {
                     margin-top: 10px;
                 }
 
@@ -192,6 +225,15 @@ export default function InstructionJobs({ instructorEmail }) {
                     background-color: #f44336;
                 }
 
+                .taken-btn {
+                    padding: 10px 20px;
+                    background-color: #9e9e9e;
+                    color: white;
+                    font-size: 16px;
+                    cursor: not-allowed;
+                    border-radius: 5px;
+                }
+
                 .take-job-btn:hover {
                     background-color: #45a049;
                 }
@@ -204,7 +246,7 @@ export default function InstructionJobs({ instructorEmail }) {
                     color: #555;
                 }
 
-                .offering-buttons button:focus {
+                .lesson-buttons button:focus {
                     outline: none;
                 }
             `}</style>

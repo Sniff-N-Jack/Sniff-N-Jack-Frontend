@@ -1,17 +1,15 @@
-// src/app/components/DeleteOffering.js
-
 import axios from 'axios';
 import React from 'react';
 
-const API_URL = 'http://localhost:2210/offerings/delete';
+const API_URL = 'http://localhost:2210/lessons/delete';
 const username = 'admin@test.com';
 const password = 'admin123';
 
-const DeleteOffering = ({ offeringId, onOfferingDeleted }) => {
+const DeleteLesson = ({ lessonId, onLessonDeleted }) => {
     const handleDelete = async () => {
         try {
             const response = await axios.delete(API_URL, {
-                params: { id: offeringId }, 
+                params: { id: lessonId }, 
                 auth: {
                     username: username,
                     password: password,
@@ -19,22 +17,21 @@ const DeleteOffering = ({ offeringId, onOfferingDeleted }) => {
             });
 
             if (response.status === 200) {
-                console.log('Offering deleted:', response.data);
-                onOfferingDeleted(offeringId); 
+                console.log('Lesson deleted:', response.data);
+                onLessonDeleted(lessonId); 
             } else {
                 console.error('Unexpected response:', response);
             }
         } catch (error) {
-            console.error('Error deleting offering:', error);
-            
-            alert(`Error deleting offering: ${error.response ? error.response.data.message : error.message}`);
+            console.error('Error deleting lesson:', error);
+            alert(`Error deleting lesson: ${error.response ? error.response.data.message : error.message}`);
         }
     };
 
     return (
         <div className="delete-button-container">
             <button className="delete-button" onClick={handleDelete}>
-                Delete Offering
+                Delete Lesson
             </button>
 
             <style jsx>{`
@@ -67,4 +64,4 @@ const DeleteOffering = ({ offeringId, onOfferingDeleted }) => {
     );
 };
 
-export default DeleteOffering;
+export default DeleteLesson;
