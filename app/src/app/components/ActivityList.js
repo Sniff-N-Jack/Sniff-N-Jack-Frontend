@@ -1,5 +1,5 @@
 // src/app/components/ActivityList.js
-
+'use client'
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import DeleteActivity from './DeleteActivity';

@@ -1,3 +1,4 @@
+'use client'
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ClientBookings.css'; //imprt the CSS file

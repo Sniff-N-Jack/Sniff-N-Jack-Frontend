@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import "./OfferingForm.css"
-
+import "./OfferingForm.css";
 
 const AddOfferingForm = () => {
     const [totalSpots, setTotalSpots] = useState(0);
@@ -15,35 +14,91 @@ const AddOfferingForm = () => {
     const [locations, setLocations] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [existingLessons, setExistingLessons] = useState([]);
 
+    
+    const fetchActivities = async () => {
+        try {
+            const response = await axios.get('http://localhost:2210/activities/all');
+            setActivities(response.data);
+        } catch (error) {
+            console.error('Error fetching activities:', error);
+        }
+    };
 
-        const fetchActivities = async () => {
-            try {
-                const response = await axios.get('http://localhost:2210/activities/all');
-                setActivities(response.data);
-            } catch (error) {
-                console.error('Error fetching activities:', error);
-            }
-        };
+    
+    const fetchLocations = async () => {
+        try {
+            const response = await axios.get('http://localhost:2210/locations/all');
+            setLocations(response.data);
+        } catch (error) {
+            console.error('Error fetching locations:', error);
+        }
+    };
 
-        const fetchLocations = async () => {
-            try {
-                const response = await axios.get('http://localhost:2210/locations/all');
-                setLocations(response.data);
-            } catch (error) {
-                console.error('Error fetching locations:', error);
-            }
-        };
+    
+    const fetchLessons = async () => {
+        try {
+            const response = await axios.get('http://localhost:2210/lessons/all');
+            setExistingLessons(response.data);  
+        } catch (error) {
+            console.error('Error fetching lessons:', error);
+        }
+    };
 
+    
     useEffect(() => {
         fetchActivities();
         fetchLocations();
+        fetchLessons();
     }, []);
 
+    const checkForDuplicateLesson = () => {
+        console.log("Checking for duplicate lesson...");
+        console.log("Existing lessons:", existingLessons);
+        console.log("New lesson details:", {
+            startDate,
+            endDate,
+            startTime,
+            endTime,
+            selectedLocation
+        });
+    
+
+        const formatTime = (time) => time.slice(0, 5); //  "12:15:00" -> "12:15"
+    
+        const normalizedStartTime = formatTime(startTime);
+        const normalizedEndTime = formatTime(endTime);
+    
+
+        const selectedLocationId = Number(selectedLocation);
+    
+        const isDuplicate = existingLessons.some(lesson =>
+            lesson.startDate === startDate &&
+            lesson.endDate === endDate &&
+            formatTime(lesson.startTime) === normalizedStartTime &&
+            formatTime(lesson.endTime) === normalizedEndTime &&
+            lesson.location?.id === selectedLocationId
+        );
+    
+        console.log("Duplicate found:", isDuplicate);
+        return isDuplicate;
+    };
+
+    // Handle the form submission
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        console.log("Form submission triggered");
 
+        // Check for duplicate lessons before submitting
+        if (checkForDuplicateLesson()) {
+            setSuccessMessage('This offering already exists for the same date, time, and location.');
+            console.log("Duplicate lesson detected, not posting.");
+            return; // If duplicate exists, prevent POST
+        }
+
+        // If no duplicate, proceed to add the offering
         const offeringData = {
             totalSpots,
             startDate,
@@ -59,6 +114,7 @@ const AddOfferingForm = () => {
             const response = await axios.post('http://localhost:2210/lessons/add', offeringData);
             console.log('Offering added:', response.data);
             setSuccessMessage('Offering added successfully!');
+            // Reset form state after successful submission
             setTotalSpots(0);
             setStartDate('');
             setEndDate('');
@@ -67,8 +123,10 @@ const AddOfferingForm = () => {
             setDayOfWeek('');
             setSelectedActivity('');
             setSelectedLocation('');
+            fetchLessons();  // Refresh the lessons list after successful posting
         } catch (error) {
             console.error('Error adding offering:', error);
+            setSuccessMessage('There was an error adding the offering.');
         }
     };
 
@@ -174,6 +232,7 @@ const AddOfferingForm = () => {
                     ))}
                 </select>
             </div>
+
             <button type="submit">Add Offering</button>
             {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
         </form>

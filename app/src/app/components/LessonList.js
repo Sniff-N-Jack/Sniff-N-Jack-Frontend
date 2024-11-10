@@ -1,7 +1,8 @@
+'use client'
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './LessonList.css'; // Rename the CSS file as needed
-import DeleteLesson from './DeleteLesson'; // Rename the Delete component for lessons
+import './LessonList.css';
+import DeleteLesson from './DeleteLesson';
 
 const LessonList = () => {
     const [lessons, setLessons] = useState([]);
@@ -53,28 +54,55 @@ const LessonList = () => {
     };
 
     const handleSubmit = async (lessonId, updatedLessonData) => {
+        
+        const formatTime = (time) => time.slice(0, 5); //  "12:15:00" -> "12:15"
+    
+        
+        const normalizedStartTime = formatTime(updatedLessonData.startTime);
+        const normalizedEndTime = formatTime(updatedLessonData.endTime);
+    
+        
+        const duplicate = lessons.some(lesson =>
+            lesson.id !== lessonId && // Exclude the current lesson
+            lesson.location.id === updatedLessonData.locationId &&
+            lesson.startDate === updatedLessonData.startDate &&
+            lesson.endDate === updatedLessonData.endDate &&
+            lesson.dayOfWeek === updatedLessonData.dayOfWeek &&
+            lesson.startTime.slice(0, 5) === normalizedStartTime &&
+            lesson.endTime.slice(0, 5) === normalizedEndTime
+        );
+    
+        if (duplicate) {
+            alert('Duplicate lesson found with the same details!');
+            
+            return;
+        }
+    
+        
+        const payload = {
+            id: lessonId,
+            totalSpots: updatedLessonData.totalSpots,
+            startDate: updatedLessonData.startDate,
+            endDate: updatedLessonData.endDate,
+            startTime: normalizedStartTime,
+            endTime: normalizedEndTime,
+            dayOfWeek: updatedLessonData.dayOfWeek,
+            activity: { id: updatedLessonData.activityId },
+            location: { id: updatedLessonData.locationId }
+        };
+    
         try {
-            const payload = {
-                id: lessonId,
-                totalSpots: updatedLessonData.totalSpots,
-                startDate: updatedLessonData.startDate,
-                endDate: updatedLessonData.endDate,
-                startTime: updatedLessonData.startTime,
-                endTime: updatedLessonData.endTime,
-                dayOfWeek: updatedLessonData.dayOfWeek,
-                activity: { id: updatedLessonData.activityId },
-                location: { id: updatedLessonData.locationId }
-            };
-
             const response = await axios.patch('http://localhost:2210/lessons/update', payload);
-            console.log('Lesson updateds:', response.data);
-
+            console.log('Lesson updated:', response.data);
+    
+            
             handleLessonUpdated(lessonId, updatedLessonData);
         } catch (error) {
             console.error('Error updating lesson:', error);
             setError('Failed to update lesson.');
         }
     };
+    
 
     if (loading) return <p>Loading lessons...</p>;
     if (error) return <p>{error}</p>;

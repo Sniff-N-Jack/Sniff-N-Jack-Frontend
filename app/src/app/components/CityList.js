@@ -1,5 +1,5 @@
 // src/app/components/CityList.js
-
+'use client'
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import DeleteCity from './DeleteCity';
