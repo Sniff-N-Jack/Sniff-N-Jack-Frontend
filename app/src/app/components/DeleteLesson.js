@@ -19,7 +19,8 @@ const DeleteLesson = ({ lessonId, onLessonDeleted }) => {
 
             if (response.status === 200) {
                 console.log('Lesson deleted:', response.data);
-                onLessonDeleted(lessonId); 
+                onLessonDeleted(lessonId);
+                window.location.reload();
             } else {
                 console.error('Unexpected response:', response);
             }

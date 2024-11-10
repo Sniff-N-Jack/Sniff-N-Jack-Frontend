@@ -9,7 +9,6 @@ export default function About() {
         <div>
             <Navbar/>
             <LocationList/>
-            <h1>Add Location</h1>
             <AddLocationForm/>
 
         

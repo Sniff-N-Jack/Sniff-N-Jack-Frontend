@@ -21,7 +21,7 @@ const ClientBookings = () => {
         };
 
         fetchBookings();
-    }, []); // No need for clientId dependency anymore
+    }, []);
 
     const handleDelete = async (bookingId) => {
         try {
