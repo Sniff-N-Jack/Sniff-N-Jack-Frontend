@@ -78,8 +78,8 @@ export default function LoginPage() {
     <div>
       <nav>
         <ul>
-          <li onClick={() => router.push('/createClient')}>Create an account as Instructor</li>
-          <li onClick={() => router.push('/createInstructor')}>Create an account as Client</li>
+          <li onClick={() => router.push('/createClient')}>Create an account as Client</li>
+          <li onClick={() => router.push('/createInstructor')}>Create an account as Instructor</li>
         </ul>
       </nav>
 

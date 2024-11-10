@@ -24,9 +24,10 @@ const ActivityForm = () => {
                 throw new Error(data.message || 'Failed to add activity');
             }
 
-            const newActivity = await response.json(); 
+            const newActivity = await response.json();
             setSuccessMessage(`Activity ${newActivity.name} added successfully!`);
             setActivityName('');
+            window.location.reload();
         } catch (error) {
             setError(error.message);
         }

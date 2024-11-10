@@ -1,9 +1,11 @@
 // src/app/about/page.js
+
+
 "use client";
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import DeleteUser from '../components/DeleteUser';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/Navbar';  // Ensure correct import
 
 const API_URL = 'http://localhost:2210/instructors/all';
 const username = 'admin@test.com';
@@ -49,12 +51,17 @@ const InstructorsList = () => {
     }
 
     if (instructors.length === 0) {
-        return <div>Loading instructors...</div>;
+        return (
+            <div>
+                <Navbar />  {/* Navbar should be here and always visible */}
+                <div>Loading instructors...</div>  {/* Loading state */}
+            </div>
+        );
     }
 
     return (
         <div>
-            <Navbar/>
+            <Navbar />  {/* Navbar should be here and always visible */}
             <ul className="instructors-list">
                 {instructors.map(instructor => (
                     <li key={instructor.id} className="instructor-card">
@@ -68,12 +75,16 @@ const InstructorsList = () => {
                             <p className="instructor-availabilities">
                                 Availabilities: {instructor.availabilities.map(availability => availability.name).join(', ')}
                             </p>
-
                         </div>
                         <DeleteUser userEmail={instructor.email} onUserDeleted={handleInstructorDeleted} />
                     </li>
                 ))}
             </ul>
+        </div>
+    );
+};
+
+
 
             <style jsx>{`
                 .instructors-list {
@@ -127,8 +138,6 @@ const InstructorsList = () => {
                     }
                 }
             `}</style>
-        </div>
-    );
-};
+
 
 export default InstructorsList;

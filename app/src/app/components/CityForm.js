@@ -28,6 +28,7 @@ const CityForm = () => {
             setSuccessMessage(`City ${newCity.name} added successfully!`);
             
             setCityName('');
+            window.location.reload();
         } catch (error) {
             setError(error.message);
         }

@@ -55,7 +55,7 @@ const AddOfferingForm = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        
+
         const offeringData = {
             totalSpots,
             startDate,
@@ -63,7 +63,7 @@ const AddOfferingForm = () => {
             startTime,
             endTime,
             dayOfWeek,
-            instructor: selectedInstructor ? { id: selectedInstructor } : null, 
+            instructor: selectedInstructor ? { id: selectedInstructor } : null,
             activity: { id: selectedActivity },
             location: { id: selectedLocation },
         };
@@ -140,13 +140,21 @@ const AddOfferingForm = () => {
             </div>
             <div>
                 <label htmlFor="dayOfWeek">Day of the Week:</label>
-                <input
-                    type="text"
+                <select
                     id="dayOfWeek"
                     value={dayOfWeek}
                     onChange={(e) => setDayOfWeek(e.target.value)}
                     required
-                />
+                >
+                    <option value="">Select a day</option>
+                    <option value="MONDAY">MONDAY</option>
+                    <option value="TUESDAY">TUESDAY</option>
+                    <option value="WEDNESDAY">WEDNESDAY</option>
+                    <option value="THURSDAY">THURSDAY</option>
+                    <option value="FRIDAY">FRIDAY</option>
+                    <option value="SATURDAY">SATURDAY</option>
+                    <option value="SUNDAY">SUNDAY</option>
+                </select>
             </div>
 
             <div>
