@@ -1,7 +1,8 @@
-'use client'; // Marking this as a client-side component
+'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 import './page.css';
 
 export default function LoginPage() {
@@ -9,7 +10,6 @@ export default function LoginPage() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  // Check if the user is already logged in
   useEffect(() => {
     const loggedInEmail = localStorage.getItem('userEmail');
     if (loggedInEmail) {
@@ -49,13 +49,11 @@ export default function LoginPage() {
     try {
       const response = await fetch('http://localhost:2210/users/all');
       const users = await response.json();
-
       const user = users.find(u => u.email === email);
 
       if (user) {
         localStorage.setItem('userEmail', email);
 
-        // Redirect based on user role
         if (user.role.name === 'ADMIN') {
           router.push(`/admin-dashboard?email=${user.email}`);
         } else if (user.role.name === 'CLIENT') {
@@ -69,13 +67,13 @@ export default function LoginPage() {
         setError("User not found.");
       }
     } catch (error) {
-      setError("An error occurred. Please try again.");
       console.error(error);
+      setError("An error occurred. Please try again.");
     }
   };
 
   return (
-    <div>
+    <div className="container">
       <nav>
         <ul>
           <li onClick={() => router.push('/createClient')}>Create an account as Client</li>
@@ -93,7 +91,7 @@ export default function LoginPage() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <label htmlFor="email">Password:</label>
+        <label htmlFor="password">Password:</label>
         <input
           type="password"
           id="password"
@@ -101,8 +99,53 @@ export default function LoginPage() {
         />
         <button type="submit">Login</button>
       </form>
-      
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      {error && <p className="error">{error}</p>}
+
+      <TakenOfferingList />
     </div>
   );
 }
+
+//  for displaying offerings
+const TakenOfferingList = () => {
+  const [offerings, setOfferings] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchOfferings = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get('http://localhost:2210/offerings/all');
+        setOfferings(response.data);
+        console.log('Fetched Offerings:', response.data);
+      } catch (err) {
+        console.error("Error fetching offerings:", err);
+        setError("Failed to fetch offerings.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOfferings();
+  }, []);
+
+  return (
+    <div className="offering-list">
+      <h3>All Offerings</h3>
+      {error && <p className="error">{error}</p>}
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <ul>
+          {offerings.map(offering => (
+            <li key={offering.id}>
+              This offering has {offering.lesson.totalSpots} spots, starts on {offering.lesson.startDate} at {offering.lesson.startTime}, ending on {offering.lesson.endDate} at {offering.lesson.endTime}. It takes place on {offering.lesson.dayOfWeek}, with the activity {offering.lesson.activity?.name} located in {offering.lesson.location?.city?.name}.
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};

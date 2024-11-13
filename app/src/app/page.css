@@ -6,8 +6,8 @@
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #f9f9f9;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
 h1 {
     text-align: center;
@@ -36,9 +36,7 @@ input {
     margin-bottom: 15px;
     font-size: 14px;
     max-width: 350px;
-    }
-
-
+}
 
 input:focus {
     border-color: #4CAF50;
@@ -94,3 +92,37 @@ nav ul li:hover {
     font-size: 14px;
 }
 
+/* TakenOfferingList Styles */
+.offering-list {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-radius: 8px;
+}
+
+.offering-list h3 {
+    text-align: center;
+    color: #333;
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.offering-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.offering-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.offering-list li:last-child {
+    border-bottom: none;
+}
+
+.offering-list li span {
+    font-weight: bold;
+    color: #555;
+}
