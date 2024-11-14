@@ -113,8 +113,8 @@ const AddOfferingForm = () => {
         try {
             const response = await axios.post('http://localhost:2210/lessons/add', offeringData);
             console.log('Offering added:', response.data);
-            setSuccessMessage('Offering added successfully!');
-            // Reset form state after successful submission
+            setSuccessMessage('Lessons added successfully!');
+            
             setTotalSpots(0);
             setStartDate('');
             setEndDate('');
@@ -123,10 +123,12 @@ const AddOfferingForm = () => {
             setDayOfWeek('');
             setSelectedActivity('');
             setSelectedLocation('');
-            fetchLessons();  // Refresh the lessons list after successful posting
+            fetchLessons();
+            window.location.reload();
         } catch (error) {
             console.error('Error adding offering:', error);
             setSuccessMessage('There was an error adding the offering.');
+            
         }
     };
 

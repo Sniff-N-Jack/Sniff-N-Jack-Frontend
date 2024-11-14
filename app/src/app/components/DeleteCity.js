@@ -27,7 +27,7 @@ const DeleteCity = ({ cityName, onCityDeleted }) => {
         } catch (error) {
             console.error("Error deleting city:", error);
             
-            alert(`Error deleting city: ${error.response ? error.response.data.message : error.message}`);
+            alert(`Error deleting city`);
         }
     };
 
