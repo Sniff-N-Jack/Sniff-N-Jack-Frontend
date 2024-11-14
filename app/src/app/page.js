@@ -15,8 +15,9 @@ export default function LoginPage() {
     setError(null); // Clear any previous error messages
 
     try {
+      var response = null;
       try {
-        const response = await axios.get("http://localhost:2210/users/login", {
+        response = await axios.get("http://localhost:2210/users/login", {
             params: {
               email: email,
               password: password
@@ -35,13 +36,13 @@ export default function LoginPage() {
       
       switch (role) {
         case "ADMIN":
-          router.push('/admin-dashboard?email=${email}');
+          router.push(`/admin-dashboard?email=${email}`);
           break;
         case "CLIENT":
-          router.push('/client-dashboard?email=${email}');
+          router.push(`/client-dashboard?email=${email}`);
           break;
         case "INSTRUCTOR":
-          router.push('/instructor-dashboard?email=${email}');
+          router.push(`/instructor-dashboard?email=${email}`);
           break;
         default:
           setError("Invalid role. Please try again.");

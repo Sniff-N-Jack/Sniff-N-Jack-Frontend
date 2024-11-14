@@ -25,7 +25,7 @@ export default function InstructorDashboard() {
             const fetchInstructorData = async () => {
                 try {
                     // Fetch instructor data by email
-                    const instructorResponse = await axios.get(`http://localhost:2210/users/get`, {
+                    const instructorResponse = await axios.get(`http://localhost:2210/instructors/get`, {
                         params: { email: instructorEmail }
                     });
 
@@ -40,7 +40,7 @@ export default function InstructorDashboard() {
                     const specializationIDs = instructor.specializations.map(spec => spec.id);
 
                     const filterOfferings = async () => {
-                        const offeringsResponse = await axios.get(`http://localhost:2210/offerings/all`);
+                        const offeringsResponse = await axios.get(`http://localhost:2210/offerings/getAvailable`);
                         
                         // First filter: offerings where instructor is either null or the current instructor
                         const firstFiltered = offeringsResponse.data.filter(offering => {
@@ -74,12 +74,7 @@ export default function InstructorDashboard() {
 
     const takeJob = async (offering) => {
         try {
-            const updatedOffering = {
-                ...offering,
-                instructor: { id: instructorData.id }
-            };
-
-            await axios.patch(`http://localhost:2210/offerings/update`, updatedOffering);
+            await axios.patch(`http://localhost:2210/offerings/take`, uoffering.id);
 
             setStatusMessage(`You have successfully taken the job for ${offering.activity.name}.`);
         } catch (error) {
