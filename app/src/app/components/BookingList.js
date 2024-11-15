@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import DeleteBookingButton from './DeleteBookingButton';
 import './ClientBookings.css'; //imprt the CSS file
 
 const ClientBookings = ({ client }) => {
@@ -56,8 +57,7 @@ const ClientBookings = ({ client }) => {
                             <p>
                                 Bookings: {booking.offering.lesson.activity.name} on {booking.offering.lesson.startDate} from {booking.offering.lesson.startTime} to {booking.offering.lesson.endTime} at {booking.offering.lesson.location.city.name}, {booking.offering.lesson.location.address} (Room: {booking.offering.lesson.location.room}). Instructor: {booking.offering.instructor.firstName} {booking.offering.instructor.lastName}, Specializations: {booking.offering.instructor.specializations.map(spec => spec.name).join(", ")}.
                             </p>
-
-                            {client.age >= 18 && <button id="delete-btn" className="delete-btn" onClick={() => handleDelete(booking.id)}>Delete</button>}
+                            <DeleteBookingButton/>
                         </div>
                     ))}
                 </div>
