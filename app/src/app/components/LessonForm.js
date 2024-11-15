@@ -14,6 +14,7 @@ const AddOfferingForm = () => {
     const [locations, setLocations] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [failureMessage, setFailureMessage] = useState('');
     const [existingLessons, setExistingLessons] = useState([]);
 
     
@@ -92,11 +93,11 @@ const AddOfferingForm = () => {
         console.log("Form submission triggered");
 
         // Check for duplicate lessons before submitting
-        if (checkForDuplicateLesson()) {
-            setSuccessMessage('This offering already exists for the same date, time, and location.');
-            console.log("Duplicate lesson detected, not posting.");
-            return; // If duplicate exists, prevent POST
-        }
+        // if (checkForDuplicateLesson()) {
+        //     setSuccessMessage('This offering already exists for the same date, time, and location.');
+        //     console.log("Duplicate lesson detected, not posting.");
+        //     return; // If duplicate exists, prevent POST
+        // }
 
         // If no duplicate, proceed to add the offering
         const offeringData = {
@@ -114,6 +115,7 @@ const AddOfferingForm = () => {
             const response = await axios.post('http://localhost:2210/lessons/add', offeringData);
             console.log('Offering added:', response.data);
             setSuccessMessage('Lessons added successfully!');
+            setFailureMessage('');
             
             setTotalSpots(0);
             setStartDate('');
@@ -127,8 +129,8 @@ const AddOfferingForm = () => {
             window.location.reload();
         } catch (error) {
             console.error('Error adding offering:', error);
-            setSuccessMessage('There was an error adding the offering.');
-            
+            setSuccessMessage('');
+            setFailureMessage(error.response.data.message);
         }
     };
 
@@ -150,6 +152,7 @@ const AddOfferingForm = () => {
                     type="date"
                     id="startDate"
                     value={startDate}
+                    min={new Date().toLocaleString('sv', {timeZone: 'Canada/Eastern'}).replace(' ', 'T').split('T')[0]}
                     onChange={(e) => setStartDate(e.target.value)}
                     required
                 />
@@ -160,6 +163,7 @@ const AddOfferingForm = () => {
                     type="date"
                     id="endDate"
                     value={endDate}
+                    min={new Date().toLocaleString('sv', {timeZone: 'Canada/Eastern'}).replace(' ', 'T').split('T')[0]}
                     onChange={(e) => setEndDate(e.target.value)}
                     required
                 />
@@ -237,6 +241,7 @@ const AddOfferingForm = () => {
 
             <button type="submit">Add Offering</button>
             {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+            {failureMessage && <p style={{ color: 'red' }}>{failureMessage}</p>}
         </form>
     );
 };

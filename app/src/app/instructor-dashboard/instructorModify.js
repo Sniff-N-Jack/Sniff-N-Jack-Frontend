@@ -20,9 +20,23 @@ export default function InstructorForm({ instructor }) {
             try {
                 const citiesResponse = await axios.get('http://localhost:2210/cities/all');
                 setCities(citiesResponse.data);
+                cities.forEach(city => {
+                    if (availabilities.map(element => {return element.name}).includes(city.name)) {
+                        document.getElementById(`city${city.id}`).checked = true;
+                    } else {
+                        document.getElementById(`city${city.id}`).checked = false;
+                    }
+                });
 
                 const activitiesResponse = await axios.get('http://localhost:2210/activities/all');
                 setActivities(activitiesResponse.data);
+                activities.forEach(activity => {
+                    if (specializations.map(element => {return element.name}).includes(activity.name)) {
+                        document.getElementById(`activity${activity.id}`).checked = true;
+                    } else {
+                        document.getElementById(`activity${activity.id}`).checked = false;
+                    }
+                });
             } catch (error) {
                 console.error("Failed to fetch cities or activities:", error);
                 setError("Could not load cities or activities");
@@ -31,6 +45,10 @@ export default function InstructorForm({ instructor }) {
 
         fetchData();
     }, []);
+
+    const load = {
+        
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -206,25 +224,39 @@ const handlePatchAvailabilities = async () => {
 
                 <label style={styles.label}>
                     Specializations:
-                    <select multiple value={specializations} onChange={(e) => setSpecializations([...e.target.selectedOptions].map(o => o.value))} style={styles.select}>
+                    <div class="container">
                         {activities.map(activity => (
-                            <option key={activity.id} value={activity.name}>
-                                {activity.name}
-                            </option>
+                            <div class="item">
+                                <input type="checkbox" id={`activity${activity.id}`} value={activity.name} onChange={(e) => {
+                                    if (e.target.checked) {
+                                        setSpecializations([...specializations, activity.name]);
+                                    } else {
+                                        setSpecializations(specializations.filter(s => s !== activity.name));
+                                    }
+                                }} />
+                                <label>{activity.name}</label>
+                            </div>
                         ))}
-                    </select>
+                    </div>                 
                 </label>
                 <br />
 
                 <label style={styles.label}>
                     Availabilities:
-                    <select multiple value={availabilities} onChange={(e) => setAvailabilities([...e.target.selectedOptions].map(o => o.value))} style={styles.select}>
+                    <div class="container">
                         {cities.map(city => (
-                            <option key={city.id} value={city.name}>
-                                {city.name}
-                            </option>
+                            <div class="item">
+                                <input type="checkbox" id={`city${city.id}`} value={city.name} onChange={(e) => {
+                                    if (e.target.checked) {
+                                        setAvailabilities([...availabilities, city.name]);
+                                    } else {
+                                        setAvailabilities(availabilities.filter(a => a !== city.name));
+                                    }
+                                }} />
+                                <label>{city.name}</label>
+                            </div>
                         ))}
-                    </select>
+                    </div>
                 </label>
                 <br />
 
@@ -237,6 +269,7 @@ const handlePatchAvailabilities = async () => {
 
             {error && <p style={styles.error}>{error}</p>}
             {success && <p style={styles.success}>{success}</p>}
+            
         </div>
     );
 }

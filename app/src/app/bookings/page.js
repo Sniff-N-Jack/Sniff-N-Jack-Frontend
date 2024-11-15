@@ -42,7 +42,7 @@ const ClientBookings = () => {
             <Navbar/>
             <div className="client-bookings">
                 {error && <p className="error-message">{error}</p>}
-                <h3>Your Bookings</h3>
+                <h3>Bookings</h3>
                 {bookings.length === 0 ? (
                     <p>No bookings found.</p>
                 ) : (

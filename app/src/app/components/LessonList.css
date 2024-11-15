@@ -1,28 +1,5 @@
 /* OfferingList.css */
 
-.offering-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin: 0 auto;
-    max-width: 800px;
-}
-
-.offering-item {
-    border: 1px solid #ddd;
-    padding: 20px;
-    border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.offering-details {
-    flex-grow: 1;
-}
-
 button {
     background-color: #4CAF50;
     color: white;
