@@ -7,8 +7,11 @@ import './page.css';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
 
   useEffect(() => {
     const loggedInEmail = localStorage.getItem('userEmail');
@@ -20,6 +23,7 @@ export default function LoginPage() {
           const user = users.find(u => u.email === loggedInEmail);
 
           if (user) {
+            
             if (user.role.name === 'ADMIN') {
               router.push(`/admin-dashboard?email=${user.email}`);
             } else if (user.role.name === 'CLIENT') {
@@ -42,9 +46,11 @@ export default function LoginPage() {
     }
   }, [router]);
 
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
+    setLoading(true);
 
     try {
       const response = await fetch('http://localhost:2210/users/all');
@@ -52,16 +58,22 @@ export default function LoginPage() {
       const user = users.find(u => u.email === email);
 
       if (user) {
-        localStorage.setItem('userEmail', email);
+        
+        if (user.password === password) {
+          localStorage.setItem('userEmail', email);
 
-        if (user.role.name === 'ADMIN') {
-          router.push(`/admin-dashboard?email=${user.email}`);
-        } else if (user.role.name === 'CLIENT') {
-          router.push(`/client-dashboard?email=${user.email}`);
-        } else if (user.role.name === 'INSTRUCTOR') {
-          router.push(`/instructor-dashboard?email=${user.email}`);
+          
+          if (user.role.name === 'ADMIN') {
+            router.push(`/admin-dashboard?email=${user.email}`);
+          } else if (user.role.name === 'CLIENT') {
+            router.push(`/client-dashboard?email=${user.email}`);
+          } else if (user.role.name === 'INSTRUCTOR') {
+            router.push(`/instructor-dashboard?email=${user.email}`);
+          } else {
+            setError("Role not recognized.");
+          }
         } else {
-          setError("Role not recognized.");
+          setError("Incorrect password.");
         }
       } else {
         setError("User not found.");
@@ -69,6 +81,8 @@ export default function LoginPage() {
     } catch (error) {
       console.error(error);
       setError("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -95,19 +109,22 @@ export default function LoginPage() {
         <input
           type="password"
           id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit" disabled={loading}>Login</button>
       </form>
 
       {error && <p className="error">{error}</p>}
+      {loading && <p>Loading...</p>}
 
       <TakenOfferingList />
     </div>
   );
 }
 
-//  for displaying offerings
+
 const TakenOfferingList = () => {
   const [offerings, setOfferings] = useState([]);
   const [loading, setLoading] = useState(false);
