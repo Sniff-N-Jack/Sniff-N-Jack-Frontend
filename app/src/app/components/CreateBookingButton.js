@@ -5,26 +5,33 @@ import axios from 'axios';
 const CreateBookingButton = ({ offeringId, client, onBookingSuccess }) => {
     const [showParentForm, setShowParentForm] = useState(false);
     const [parentEmail, setParentEmail] = useState('');
+    const [parentPassword, setParentPassword] = useState('');
     const [isMinor, setIsMinor] = useState(false);
     const [parentData, setParentData] = useState(null);
 
     useEffect(() => {
         checkUserAge();
-    }, [client.id]);
+    });
 
     const checkUserAge = async () => {
         try {
-            setIsMinor(client.age < 18);
-            if (isMinor < 18) {
+            const minor = client.age < 18;
+            setIsMinor(minor);
+            if (minor) {
                 setParentData({
                     id: client.parent.id,
-                    email: client.parent.email
+                    email: client.parent.email,
+                    password: client.parent.password
                 });
             }
         } catch (err) {
             console.error("Error checking user age:", err);
             alert("Failed to verify user age.");
         }
+    };
+
+    const checkParentPassword = (password) => {
+        return password === parentData.password;  // Plain text password comparison
     };
 
     const handleCreateBooking = async () => {
@@ -38,11 +45,19 @@ const CreateBookingButton = ({ offeringId, client, onBookingSuccess }) => {
             return;
         }
 
+        if (isMinor && parentEmail === parentData.email && parentPassword) {
+            const isPasswordCorrect = checkParentPassword(parentPassword);
+            if (!isPasswordCorrect) {
+                alert("Incorrect password.");
+                return;
+            }
+        }
+
         try {
             const response = await axios.post(`http://localhost:2210/bookings/add`, null, {
                 params: {
                     offeringId,
-                    clientId: client.idId
+                    clientId: client.id
                 }
             });
 
@@ -54,14 +69,11 @@ const CreateBookingButton = ({ offeringId, client, onBookingSuccess }) => {
                 onBookingSuccess();
             }
 
-            // Reset form
             setShowParentForm(false);
             setParentEmail('');
-
+            setParentPassword('');
         } catch (err) {
             console.error("Error creating booking:", err);
-
-            // Perform a check for duplicate booking
             await checkForExistingBooking();
         }
     };
@@ -71,11 +83,8 @@ const CreateBookingButton = ({ offeringId, client, onBookingSuccess }) => {
             const response = await axios.get('http://localhost:2210/bookings/all');
             const bookings = response.data;
 
-            // Check if a booking exists with the same offering and client (or parent) ID
             const existingBooking = bookings.find(
-                (booking) =>
-                    booking.client.id === client.id &&
-                    booking.offering.id === offeringId
+                (booking) => booking.client.id === client.id && booking.offering.id === offeringId
             );
 
             if (existingBooking) {
@@ -92,7 +101,7 @@ const CreateBookingButton = ({ offeringId, client, onBookingSuccess }) => {
     if (showParentForm && isMinor) {
         return (
             <div className="p-4 border rounded shadow-sm">
-                <p className="mb-4 text-red-600">You're underage. Please enter parent's email to proceed with booking.</p>
+                <p className="mb-4 text-red-600">You're underage. Please enter parent's email and password to proceed with booking.</p>
                 <input
                     type="email"
                     placeholder="Parent's Email"
@@ -100,9 +109,15 @@ const CreateBookingButton = ({ offeringId, client, onBookingSuccess }) => {
                     onChange={(e) => setParentEmail(e.target.value)}
                     className="block w-full mb-2 p-2 border rounded"
                 />
+                <input
+                    type="password"
+                    placeholder="Parent's Password"
+                    value={parentPassword}
+                    onChange={(e) => setParentPassword(e.target.value)}
+                    className="block w-full mb-2 p-2 border rounded"
+                />
                 <button
                     onClick={handleCreateBooking}
-
                     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                 >
                     Confirm Booking

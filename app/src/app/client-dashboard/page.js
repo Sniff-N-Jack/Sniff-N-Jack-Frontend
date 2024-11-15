@@ -38,10 +38,11 @@ export default function Home() {
         }
     }, []);
 
-    // Logout  redirects to home
+    // Logout function - remove from localStorage and redirect to the login page
     const logout = () => {
         localStorage.removeItem('userEmail');
-        router.push('/');
+        setClientData(null); // Clear client data state
+        router.push('/'); // Redirect to the login page
     };
 
     // Loading and error handling before the main UI
@@ -71,12 +72,16 @@ export default function Home() {
                 </button>
             </div>
             <main>
-                
                 <div>
-                    <h2>Your Client ID: {clientData.id}</h2>
-
-                    <TakenOfferingList client={clientData} />
-                    <ClientBookings client={clientData} />
+                    {clientData ? (
+                        <>
+                            <h2>Your Client ID: {clientData.id}</h2>
+                            <TakenOfferingList client={clientData} />
+                            <ClientBookings client={clientData} />
+                        </>
+                    ) : (
+                        <p>Please log in to view your details.</p>
+                    )}
                 </div>
             </main>
 

@@ -1,17 +1,29 @@
-
-'use client'
+'use client';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
     const router = useRouter();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    // Check if the user is logged in by checking localStorage
+    useEffect(() => {
+        const email = localStorage.getItem('userEmail');
+        if (email) {
+            setIsLoggedIn(true); // Set user as logged in if email is in localStorage
+        } else {
+            setIsLoggedIn(false); // Otherwise, set as logged out
+        }
+    }, []);
 
     const navigateTo = (path) => {
         router.push(path);
     };
 
     const logout = () => {
-        localStorage.removeItem('userEmail');
-        router.push('/');
+        localStorage.removeItem('userEmail'); // Clear user email from localStorage
+        setIsLoggedIn(false); // Update the state to reflect the logout
+        router.push('/'); // Redirect to the login page
     };
 
     return (
@@ -24,7 +36,11 @@ export default function Navbar() {
                 <li onClick={() => navigateTo('/cities')}>Cities</li>
                 <li onClick={() => navigateTo('/activities')}>Activities</li>
                 <li onClick={() => navigateTo('/bookings')}>Bookings</li>
-                <li onClick={logout} className="logout-btn">Logout</li>
+                
+                {/* Show Logout only if the user is logged in */}
+                {isLoggedIn && (
+                    <li onClick={logout} className="logout-btn">Logout</li>
+                )}
             </ul>
 
             <style jsx>{`
