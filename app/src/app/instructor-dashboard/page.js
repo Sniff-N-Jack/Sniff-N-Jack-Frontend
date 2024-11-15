@@ -26,7 +26,7 @@ export default function InstructorDashboard() {
         if (instructorEmail) {
             const fetchInstructorData = async () => {
                 try {
-                    const instructorResponse = await axios.get(`http://localhost:2210/users/get`, {
+                    const instructorResponse = await axios.get('http://localhost:2210/users/get', {
                         params: { email: instructorEmail }
                     });
 
@@ -50,8 +50,8 @@ export default function InstructorDashboard() {
     }, [instructorEmail]);
 
     const logout = () => {
-        localStorage.removeItem('userEmail');
-        router.push('/');
+        localStorage.removeItem('userEmail'); // Clear user data from localStorage
+        router.push('/'); // Redirect to login page after logout
     };
 
     if (loading) return <p>Loading...</p>;

@@ -1,4 +1,3 @@
-
 'use client';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -10,16 +9,43 @@ const TakenOfferingList = ({ client }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
+    const formatTime = (time) => time.slice(0, 5); // "12:15:00" -> "12:15"
+
+    
+    const isOfferingDuplicate = (offering) => {
+        const normalizedStartTime = formatTime(offering.lesson.startTime);
+        const normalizedEndTime = formatTime(offering.lesson.endTime);
+        const offeringLocationId = offering.location?.id;
+
+        
+        return bookings.some(booking => {
+            const bookedOffering = booking.offering;
+            const normalizedBookedStartTime = formatTime(bookedOffering.lesson.startTime);
+            const normalizedBookedEndTime = formatTime(bookedOffering.lesson.endTime);
+            const bookedLocationId = bookedOffering.location?.id;
+
+            
+            return (
+                bookedOffering.lesson.startDate === offering.lesson.startDate &&
+                bookedOffering.lesson.endDate === offering.lesson.endDate &&
+                normalizedBookedStartTime === normalizedStartTime &&
+                normalizedBookedEndTime === normalizedEndTime &&
+                bookedLocationId === offeringLocationId
+            );
+        });
+    };
+
     useEffect(() => {
         const fetchOfferings = async () => {
             setLoading(true);
             try {
                 const [offeringsResponse, bookingsResponse] = await Promise.all([
                     axios.get('http://localhost:2210/offerings/all'),
-                    axios.get(`http://localhost:2210/bookings/all?clientId=${client.id}`)
+                    axios.get(`http://localhost:2210/bookings/getByClient?clientId=${client.id}`)
                 ]);
                 setOfferings(offeringsResponse.data);  
                 setBookings(bookingsResponse.data);
+                console.log ('client_id:', client.id);
                 console.log('Fetched Offerings:', offeringsResponse.data);
                 console.log('Fetched Bookings:', bookingsResponse.data);
             } catch (err) {
@@ -37,11 +63,6 @@ const TakenOfferingList = ({ client }) => {
         fetchOfferings();
     };
 
-    // Check if the client has already booked an offering
-    const hasBookedOffering = (offeringId) => {
-        return bookings.some(booking => booking.offering.id === offeringId);
-    };
-
     return (
         <div className="offerings-container">
             <h3>All Offerings</h3>
@@ -51,7 +72,7 @@ const TakenOfferingList = ({ client }) => {
             {offerings.length > 0 ? (
                 <div className="booking-list">
                     {offerings.map((offering, index) => {
-                        const isBooked = hasBookedOffering(offering.id);
+                        const isBooked = isOfferingDuplicate(offering);
 
                         return (
                             <div
