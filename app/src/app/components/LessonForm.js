@@ -233,7 +233,7 @@ const AddOfferingForm = () => {
                     <option value="">Select a location</option>
                     {locations.map(location => (
                         <option key={location.id} value={location.id}>
-                            {location.address}
+                            {location.address + ", " + location.city.name}
                         </option>
                     ))}
                 </select>

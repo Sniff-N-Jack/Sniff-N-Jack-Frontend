@@ -7,7 +7,6 @@ export default function InstructorForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [phone, setPhone] = useState('');
-    const [age, setAge] = useState('');
     const [specializations, setSpecializations] = useState([]);
     const [availabilities, setAvailabilities] = useState([]);
     const [cities, setCities] = useState([]);
@@ -44,7 +43,6 @@ export default function InstructorForm() {
             email,
             password,
             phone,
-            age: parseInt(age, 10), 
             specializations: specializations.map(activity => ({ name: activity })),
             availabilities: availabilities.map(city => ({ name: city })), 
         };
@@ -139,38 +137,40 @@ export default function InstructorForm() {
                 <br />
 
                 <label style={styles.label}>
-                    Age:
-                    <input
-                        type="number"
-                        value={age}
-                        onChange={(e) => setAge(e.target.value)}
-                        required
-                        style={styles.input}
-                    />
-                </label>
-                <br />
-
-                <label style={styles.label}>
-                    Specializations:
-                    <select multiple value={specializations} onChange={(e) => setSpecializations([...e.target.selectedOptions].map(o => o.value))} style={styles.select}>
+                    Specializations: {specializations.join(', ')}
+                    <div class="container">
                         {activities.map(activity => (
-                            <option key={activity.id} value={activity.name}>
-                                {activity.name}
-                            </option>
+                            <div class="item">
+                                <input type="checkbox" value={activity.name} onChange={(e) => {
+                                    if (e.target.checked) {
+                                        setSpecializations([...specializations, activity.name]);
+                                    } else {
+                                        setSpecializations(specializations.filter(s => s !== activity.name));
+                                    }
+                                }} />
+                                <label>{activity.name}</label>
+                            </div>
                         ))}
-                    </select>
+                    </div>
                 </label>
                 <br />
 
                 <label style={styles.label}>
                     Availabilities:
-                    <select multiple value={availabilities} onChange={(e) => setAvailabilities([...e.target.selectedOptions].map(o => o.value))} style={styles.select}>
+                    <div class="container">
                         {cities.map(city => (
-                            <option key={city.id} value={city.name}>
-                                {city.name}
-                            </option>
+                            <div class="item">
+                                <input type="checkbox" value={city.name} onChange={(e) => {
+                                    if (e.target.checked) {
+                                        setAvailabilities([...availabilities, city.name]);
+                                    } else {
+                                        setAvailabilities(availabilities.filter(a => a !== city.name));
+                                    }
+                                }} />
+                                <label>{city.name}</label>
+                            </div>
                         ))}
-                    </select>
+                    </div>
                 </label>
                 <br />
 

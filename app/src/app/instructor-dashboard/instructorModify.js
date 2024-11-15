@@ -8,8 +8,8 @@ export default function InstructorForm({ instructor }) {
     const [password, setPassword] = useState(instructor?.password || ''); // Optional if password isn't editable
     const [phone, setPhone] = useState(instructor?.phone || '');
     const [age, setAge] = useState(instructor?.age || '');
-    const [specializations, setSpecializations] = useState(instructor?.specializations || []);
-    const [availabilities, setAvailabilities] = useState(instructor?.availabilities || []);
+    const [specializations, setSpecializations] = useState(instructor?.specializations.map(element => {return element.name}) || []);
+    const [availabilities, setAvailabilities] = useState(instructor?.availabilities.map(element => {return element.name}) || []);
     const [cities, setCities] = useState([]);
     const [activities, setActivities] = useState([]);
     const [error, setError] = useState(null);
@@ -105,6 +105,7 @@ export default function InstructorForm({ instructor }) {
             } else {
                 setError('Error updating specializations');
             }
+            window.location.reload();
         } catch (error) {
             console.error("Error in handlePatchSpecializations:", error);
             setError('Network error while updating specializations');
@@ -133,17 +134,12 @@ const handlePatchAvailabilities = async () => {
         } else {
             setError('Error updating availabilities');
         }
+        window.location.reload();
     } catch (error) {
         console.error("Error in handlePatchAvailabilities:", error);
         setError('Network error while updating availabilities');
     }
 };
-
-    
-    
-    
-    
-    
 
     const handlePatchPersonal = async () => {
         const updatedInstructorDetails = {
@@ -162,6 +158,7 @@ const handlePatchAvailabilities = async () => {
             } else {
                 setError('Error updating instructor details');
             }
+            window.location.reload();
         } catch (error) {
             console.error("Error in handlePatchPersonal:", error);
             setError('Network error while updating instructor details');
@@ -223,13 +220,14 @@ const handlePatchAvailabilities = async () => {
                 <br />
 
                 <label style={styles.label}>
-                    Specializations:
+                    Specializations: {instructor?.specializations.map(element => {return element.name}).join(', ')}
                     <div class="container">
                         {activities.map(activity => (
                             <div class="item">
                                 <input type="checkbox" id={`activity${activity.id}`} value={activity.name} onChange={(e) => {
                                     if (e.target.checked) {
-                                        setSpecializations([...specializations, activity.name]);
+                                        if (!specializations.includes(activity.name))
+                                            setSpecializations([...specializations, activity.name]);
                                     } else {
                                         setSpecializations(specializations.filter(s => s !== activity.name));
                                     }
@@ -242,13 +240,14 @@ const handlePatchAvailabilities = async () => {
                 <br />
 
                 <label style={styles.label}>
-                    Availabilities:
+                    Availabilities: {instructor?.availabilities.map(element => {return element.name}).join(', ')}
                     <div class="container">
                         {cities.map(city => (
                             <div class="item">
                                 <input type="checkbox" id={`city${city.id}`} value={city.name} onChange={(e) => {
                                     if (e.target.checked) {
-                                        setAvailabilities([...availabilities, city.name]);
+                                        if (!availabilities.includes(city.name))
+                                            setAvailabilities([...availabilities, city.name]);
                                     } else {
                                         setAvailabilities(availabilities.filter(a => a !== city.name));
                                     }
