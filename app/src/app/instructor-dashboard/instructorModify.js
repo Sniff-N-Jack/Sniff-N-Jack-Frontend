@@ -85,21 +85,21 @@ export default function InstructorForm({ instructor }) {
     };
 
     const handlePatchSpecializations = async () => {
-        console.log("Specializations before patch:", specializations);  // Log the current specializations
+        console.log("Specializations before patch:", specializations);  
     
         try {
-            // Prepare query params to send multiple 'names' values as expected for specializations
+            
             const params = specializations.map(specialization => `names=${encodeURIComponent(specialization)}`).join('&');
     
-            console.log("Sending params for specializations:", params);  // Log params to verify the correct format
+            console.log("Sending params for specializations:", params);
     
-            // Send the request
+            
             const response = await axios.patch(`http://localhost:2210/instructors/setSpecializations/${instructor.id}?${params}`);
     
-            // Log the full URL and params being sent
+            
             console.log("Request URL:", `http://localhost:2210/instructors/setSpecializations/${instructor.id}?${params}`);
             
-            // After sending the request, log the response data
+            
             if (response.status === 200) {
                 setSuccess('Specializations updated successfully!');
             } else {
@@ -113,21 +113,21 @@ export default function InstructorForm({ instructor }) {
     
 
 const handlePatchAvailabilities = async () => {
-    console.log("Availabilities before patch:", availabilities);  // Log the current availabilities
+    console.log("Availabilities before patch:", availabilities);
 
     try {
-        // Prepare query params to send multiple 'names' values as expected
+        
         const params = availabilities.map(availability => `names=${encodeURIComponent(availability)}`).join('&');
 
-        console.log("Sending params for availabilities:", params);  // Log params to verify the correct format
+        console.log("Sending params for availabilities:", params);  
 
-        // Send the request
+        
         const response = await axios.patch(`http://localhost:2210/instructors/setAvailabilities/${instructor.id}?${params}`);
 
-        // Log the full URL and params being sent
+        
         console.log("Request URL:", `http://localhost:2210/instructors/setAvailabilities/${instructor.id}?${params}`);
         
-        // After sending the request, log the response data
+        
         if (response.status === 200) {
             setSuccess('Availabilities updated successfully!');
         } else {

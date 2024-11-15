@@ -6,6 +6,7 @@ import Head from "next/head";
 import axios from 'axios';
 import TakenOfferingList from '../components/ClientOfferings';
 import ClientBookings from '../components/BookingList';
+import ClientForm from './clientModify';
 
 export default function Home() {
     const router = useRouter();
@@ -38,7 +39,6 @@ export default function Home() {
         }
     }, []);
 
-    
     const logout = () => {
         localStorage.removeItem('userEmail');
         setClientData(null);
@@ -52,7 +52,7 @@ export default function Home() {
     return (
         <div>
             <Head>
-                <title>Offerings Page</title>
+                <title>Client Page</title>
             </Head>
 
             <div style={{ padding: '10px' }}>
@@ -71,6 +71,7 @@ export default function Home() {
                     Logout
                 </button>
             </div>
+
             <main>
                 <div>
                     {clientData ? (
@@ -78,13 +79,13 @@ export default function Home() {
                             <h2>Your Client ID: {clientData.id}</h2>
                             <TakenOfferingList client={clientData} />
                             <ClientBookings client={clientData} />
+                            <ClientForm client={clientData} /> {/* Render the ClientForm for editing */}
                         </>
                     ) : (
                         <p>Please log in to view your details.</p>
                     )}
                 </div>
             </main>
-
         </div>
     );
 }
