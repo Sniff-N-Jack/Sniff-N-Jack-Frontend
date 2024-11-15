@@ -9,7 +9,7 @@ import ClientBookings from '../components/BookingList';
 
 export default function Home() {
     const router = useRouter();
-    const [clientId, setClientId] = useState(null);
+    const [clientData, setClientData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -22,7 +22,7 @@ export default function Home() {
                     const response = await axios.get(`http://localhost:2210/users/get`, {
                         params: { email }
                     });
-                    setClientId(response.data.id || null);
+                    setClientData(response.data || null);
                 } catch (err) {
                     console.error('Error fetching clientId:', err);
                     setError('Failed to fetch client data.');
@@ -73,10 +73,10 @@ export default function Home() {
             <main>
                 
                 <div>
-                    <h2>Your Client ID: {clientId}</h2>
+                    <h2>Your Client ID: {clientData.id}</h2>
 
-                    <TakenOfferingList clientId={clientId} />
-                    <ClientBookings clientId={clientId} />
+                    <TakenOfferingList client={clientData} />
+                    <ClientBookings client={clientData} />
                 </div>
             </main>
 

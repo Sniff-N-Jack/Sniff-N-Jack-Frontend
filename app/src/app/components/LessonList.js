@@ -110,130 +110,176 @@ const LessonList = () => {
     return (
         <div className="lesson-list">
             <h2>Lesson List</h2>
-            {lessons.map(lesson => (
-                <div key={lesson.id} className="lesson-item">
-                    <p>
-                        This lesson has {lesson.totalSpots} total spots and starts on {lesson.startDate} at {lesson.startTime}, ending on {lesson.endDate} at {lesson.endTime}. It takes place on {lesson.dayOfWeek}, with the activity '{activities.find(activity => activity.id === lesson.activity.id)?.name}' located at {locations.find(location => location.id === lesson.location.id)?.address}.
-                        <br />
-                        <button onClick={() => setSelectedLesson(prev => (prev === lesson.id ? null : lesson.id))}>
-                            {selectedLesson === lesson.id ? 'Hide Form' : 'Edit'}
-                        </button>
-                    </p>
+            <table className="lesson-table">
+                <thead>
+                    <tr>
+                        <th>Total Spots</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Timeslot</th>
+                        <th>Day of Week</th>
+                        <th>Activity</th>
+                        <th>Location</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {lessons.map(lesson => (
+                        <tr key={lesson.id}>
+                            <td>{lesson.totalSpots}</td>
+                            <td>{lesson.startDate}</td>
+                            <td>{lesson.endDate}</td>
+                            <td>{lesson.startTime} - {lesson.endTime}</td>
+                            <td>{lesson.dayOfWeek}</td>
+                            <td>{lesson.activity.name}</td>
+                            <td>{lesson.location.address}, {lesson.location.city.name}</td>
+                            <td>
+                                <button onClick={() => setSelectedLesson(prev => (prev === lesson.id ? null : lesson.id))}>
+                                    {selectedLesson === lesson.id ? 'Hide Form' : 'Edit'}
+                                </button>
 
-                    {selectedLesson === lesson.id && (
-                        <>
-                            <form onSubmit={(e) => {
-                                e.preventDefault();
-                                handleSubmit(lesson.id, {
-                                    totalSpots: lesson.totalSpots,
-                                    startDate: lesson.startDate,
-                                    endDate: lesson.endDate,
-                                    startTime: lesson.startTime,
-                                    endTime: lesson.endTime,
-                                    dayOfWeek: lesson.dayOfWeek,
-                                    activityId: lesson.activity.id,
-                                    locationId: lesson.location.id
-                                });
-                            }} className="lesson-form">
-                                <div>
-                                    <label htmlFor="totalSpots">Total Spots:</label>
-                                    <input
-                                        type="number"
-                                        id="totalSpots"
-                                        defaultValue={lesson.totalSpots}
-                                        onChange={(e) => lesson.totalSpots = e.target.value}
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="startDate">Start Date:</label>
-                                    <input
-                                        type="date"
-                                        id="startDate"
-                                        defaultValue={lesson.startDate}
-                                        onChange={(e) => lesson.startDate = e.target.value}
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="endDate">End Date:</label>
-                                    <input
-                                        type="date"
-                                        id="endDate"
-                                        defaultValue={lesson.endDate}
-                                        onChange={(e) => lesson.endDate = e.target.value}
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="startTime">Start Time:</label>
-                                    <input
-                                        type="time"
-                                        id="startTime"
-                                        defaultValue={lesson.startTime}
-                                        onChange={(e) => lesson.startTime = e.target.value}
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="endTime">End Time:</label>
-                                    <input
-                                        type="time"
-                                        id="endTime"
-                                        defaultValue={lesson.endTime}
-                                        onChange={(e) => lesson.endTime = e.target.value}
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="dayOfWeek">Day of Week:</label>
-                                    <input
-                                        type="text"
-                                        id="dayOfWeek"
-                                        defaultValue={lesson.dayOfWeek}
-                                        onChange={(e) => lesson.dayOfWeek = e.target.value}
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label htmlFor="activity">Activity:</label>
-                                    <select
-                                        id="activity"
-                                        defaultValue={lesson.activity.id}
-                                        onChange={(e) => lesson.activity.id = e.target.value}
-                                        required
-                                    >
-                                        {activities.map(activity => (
-                                            <option key={activity.id} value={activity.id}>
-                                                {activity.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label htmlFor="location">Location:</label>
-                                    <select
-                                        id="location"
-                                        defaultValue={lesson.location.id}
-                                        onChange={(e) => lesson.location.id = e.target.value}
-                                        required
-                                    >
-                                        {locations.map(location => (
-                                            <option key={location.id} value={location.id}>
-                                                {location.address}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <button type="submit">Update Lesson</button>
-                            </form>
-                            {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-                        </>
-                    )}
+                                {selectedLesson === lesson.id && (
+                                <>
+                                    <form onSubmit={(e) => {
+                                        e.preventDefault();
+                                        handleSubmit(lesson.id, {
+                                            totalSpots: lesson.totalSpots,
+                                            startDate: lesson.startDate,
+                                            endDate: lesson.endDate,
+                                            startTime: lesson.startTime,
+                                            endTime: lesson.endTime,
+                                            dayOfWeek: lesson.dayOfWeek,
+                                            activityId: lesson.activity.id,
+                                            locationId: lesson.location.id
+                                        });
+                                        setSelectedLesson(null);
+                                    }} className="lesson-form">
+                                        <div>
+                                            <label htmlFor="totalSpots">Total Spots:</label>
+                                            <input
+                                                type="number"
+                                                id="totalSpots"
+                                                defaultValue={lesson.totalSpots}
+                                                onChange={(e) => lesson.totalSpots = e.target.value}
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="startDate">Start Date:</label>
+                                            <input
+                                                type="date"
+                                                id="startDate"
+                                                defaultValue={lesson.startDate}
+                                                onChange={(e) => lesson.startDate = e.target.value}
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="endDate">End Date:</label>
+                                            <input
+                                                type="date"
+                                                id="endDate"
+                                                defaultValue={lesson.endDate}
+                                                onChange={(e) => lesson.endDate = e.target.value}
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="startTime">Start Time:</label>
+                                            <input
+                                                type="time"
+                                                id="startTime"
+                                                defaultValue={lesson.startTime}
+                                                onChange={(e) => lesson.startTime = e.target.value}
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="endTime">End Time:</label>
+                                            <input
+                                                type="time"
+                                                id="endTime"
+                                                defaultValue={lesson.endTime}
+                                                onChange={(e) => lesson.endTime = e.target.value}
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="dayOfWeek">Day of Week:</label>
+                                            <input
+                                                type="text"
+                                                id="dayOfWeek"
+                                                defaultValue={lesson.dayOfWeek}
+                                                onChange={(e) => lesson.dayOfWeek = e.target.value}
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="activity">Activity:</label>
+                                            <select
+                                                id="activity"
+                                                defaultValue={lesson.activity.id}
+                                                onChange={(e) => lesson.activity.id = e.target.value}
+                                                required
+                                            >
+                                                {activities.map(activity => (
+                                                    <option key={activity.id} value={activity.id}>
+                                                        {activity.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label htmlFor="location">Location:</label>
+                                            <select
+                                                id="location"
+                                                defaultValue={lesson.location.id}
+                                                onChange={(e) => lesson.location.id = e.target.value}
+                                                required
+                                            >
+                                                {locations.map(location => (
+                                                    <option key={location.id} value={location.id}>
+                                                        {location.address}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <button type="submit">Update Lesson</button>
+                                    </form>
+                                </>
+                            )}
+                                <DeleteLesson lessonId={lesson.id} onLessonDeleted={(id) => setLessons(lessons.filter(lesson => lesson.id !== id))} />
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
 
-                    <DeleteLesson lessonId={lesson.id} onLessonDeleted={(id) => setLessons(lessons.filter(lesson => lesson.id !== id))} />
-                </div>
-            ))}
+            <style jsx>{`
+                .lesson-list {
+                    margin: 20px;
+                }
+                .lesson-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 10px;
+                }
+                .lesson-table th, .lesson-table td {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                    text-align: left;
+                }
+                .lesson-table th {
+                    background-color: #f2f2f2;
+                }
+                .loading, .error {
+                    color: red;
+                    font-weight: bold;
+                }
+                tr:hover {
+                    background-color: #f1f1f1;
+                }
+            `}</style>
         </div>
     );
 };
