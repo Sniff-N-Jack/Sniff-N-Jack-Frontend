@@ -38,11 +38,11 @@ export default function Home() {
         }
     }, []);
 
-    // Logout function - remove from localStorage and redirect to the login page
+    
     const logout = () => {
         localStorage.removeItem('userEmail');
-        setClientData(null); // Clear client data state
-        router.push('/'); // Redirect to the login page
+        setClientData(null);
+        router.push('/');
     };
 
     // Loading and error handling before the main UI
