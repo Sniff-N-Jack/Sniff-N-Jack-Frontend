@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const CreateBookingButton = ({ offeringId, client, onBookingSuccess }) => {
+const DeleteBookingButton = ({ bookingId, client, onDeleteSuccess }) => {
     const [showParentForm, setShowParentForm] = useState(false);
     const [parentEmail, setParentEmail] = useState('');
     const [isMinor, setIsMinor] = useState(false);
@@ -15,7 +15,7 @@ const CreateBookingButton = ({ offeringId, client, onBookingSuccess }) => {
     const checkUserAge = async () => {
         try {
             setIsMinor(client.age < 18);
-            if (isMinor < 18) {
+            if (isMinor) {
                 setParentData({
                     id: client.parent.id,
                     email: client.parent.email
@@ -27,7 +27,7 @@ const CreateBookingButton = ({ offeringId, client, onBookingSuccess }) => {
         }
     };
 
-    const handleCreateBooking = async () => {
+    const handleDeleteBooking = async () => {
         if (isMinor && !parentEmail) {
             setShowParentForm(true);
             return;
@@ -39,19 +39,18 @@ const CreateBookingButton = ({ offeringId, client, onBookingSuccess }) => {
         }
 
         try {
-            const response = await axios.post(`http://localhost:2210/bookings/add`, null, {
+            const response = await axios.post(`http://localhost:2210/bookings/delete`, null, {
                 params: {
-                    offeringId,
-                    clientId: client.idId
+                    id: bookingId,
                 }
             });
 
-            console.log('Booking created successfully:', response.data);
-            alert('Booking created successfully!');
+            console.log('Booking deleted successfully:', response.data);
+            alert('Booking deleted successfully!');
             window.location.reload();
 
-            if (onBookingSuccess) {
-                onBookingSuccess();
+            if (onDeleteSuccess) {
+                onDeleteSuccess();
             }
 
             // Reset form
@@ -81,7 +80,7 @@ const CreateBookingButton = ({ offeringId, client, onBookingSuccess }) => {
             if (existingBooking) {
                 alert("Your parent already booked it for you. Ask them for more details.");
             } else {
-                alert("Failed to create booking due to an unknown error.");
+                alert("Failed to delete booking due to an unknown error.");
             }
         } catch (error) {
             console.error("Error checking for existing booking:", error);
@@ -101,7 +100,7 @@ const CreateBookingButton = ({ offeringId, client, onBookingSuccess }) => {
                     className="block w-full mb-2 p-2 border rounded"
                 />
                 <button
-                    onClick={handleCreateBooking}
+                    onClick={handleDeleteBooking}
 
                     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                 >
@@ -113,12 +112,12 @@ const CreateBookingButton = ({ offeringId, client, onBookingSuccess }) => {
 
     return (
         <button
-            onClick={handleCreateBooking}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            onClick={handleDeleteBooking}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
         >
-            Create Booking
+            Delete Booking
         </button>
     );
 };
 
-export default CreateBookingButton;
+export default DeleteBookingButton;

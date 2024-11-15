@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ClientBookings.css'; //imprt the CSS file
 
-const ClientBookings = ({ clientId }) => {
+const ClientBookings = ({ client }) => {
+    const [clientId, setClientId] = useState(client.id);
     const [bookings, setBookings] = useState([]);
     const [error, setError] = useState('');
 
@@ -26,7 +27,7 @@ const ClientBookings = ({ clientId }) => {
 
             fetchBookings();
         }
-    }, [clientId]);
+    }, [client.id]);
 
     const handleDelete = async (bookingId) => {
         try {
@@ -38,7 +39,7 @@ const ClientBookings = ({ clientId }) => {
             setBookings((prevBookings) => prevBookings.filter((booking) => booking.id !== bookingId));
         } catch (err) {
             console.error('Error deleting booking:', err);
-            setError('Failed to delete booking.');
+            setError(error.response.data.message);
         }
     };
 
@@ -56,7 +57,7 @@ const ClientBookings = ({ clientId }) => {
                                 Bookings: {booking.offering.lesson.activity.name} on {booking.offering.lesson.startDate} from {booking.offering.lesson.startTime} to {booking.offering.lesson.endTime} at {booking.offering.lesson.location.city.name}, {booking.offering.lesson.location.address} (Room: {booking.offering.lesson.location.room}). Instructor: {booking.offering.instructor.firstName} {booking.offering.instructor.lastName}, Specializations: {booking.offering.instructor.specializations.map(spec => spec.name).join(", ")}.
                             </p>
 
-                            <button className="delete-btn" onClick={() => handleDelete(booking.id)}>Delete</button>
+                            {client.age >= 18 && <button id="delete-btn" className="delete-btn" onClick={() => handleDelete(booking.id)}>Delete</button>}
                         </div>
                     ))}
                 </div>

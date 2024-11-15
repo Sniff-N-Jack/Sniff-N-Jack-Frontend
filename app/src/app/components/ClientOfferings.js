@@ -1,10 +1,10 @@
 
-'use client'
+'use client';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import CreateBookingButton from './CreateBookingButton';
 
-const TakenOfferingList = ({ clientId }) => {
+const TakenOfferingList = ({ client }) => {
     const [offerings, setOfferings] = useState([]);
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -16,7 +16,7 @@ const TakenOfferingList = ({ clientId }) => {
             try {
                 const [offeringsResponse, bookingsResponse] = await Promise.all([
                     axios.get('http://localhost:2210/offerings/all'),
-                    axios.get(`http://localhost:2210/bookings/all?clientId=${clientId}`)
+                    axios.get(`http://localhost:2210/bookings/all?clientId=${client.id}`)
                 ]);
                 setOfferings(offeringsResponse.data);  
                 setBookings(bookingsResponse.data);
@@ -31,7 +31,7 @@ const TakenOfferingList = ({ clientId }) => {
         };
 
         fetchOfferings();
-    }, [clientId]);
+    }, [client.id]);
 
     const handleBookingCreated = () => {
         fetchOfferings();
@@ -66,7 +66,7 @@ const TakenOfferingList = ({ clientId }) => {
                                 {!isBooked && (
                                     <CreateBookingButton
                                         offeringId={offering.id}
-                                        clientId={clientId}
+                                        client={client}
                                         onBookingCreated={handleBookingCreated}
                                     />
                                 )}
