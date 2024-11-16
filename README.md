@@ -17,6 +17,7 @@ npm install
 ```
 <br>
 To run the project, go to the <code>app</code> folder and run the following command:
+
 ```
 npm run dev
 ```
